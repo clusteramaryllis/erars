@@ -1,10 +1,10 @@
 ## Installasi
 
-Download & Install [Composer](https://getcomposer.org/download/)
+Download & install [Composer](https://getcomposer.org/download/)
 
-Download Project & Extract
+Download project & extract
 
-Dalam Folder Project yang sudah di extract jalankan dari command prompt
+Dalam folder project yang sudah di extract jalankan dari command prompt
 
 `composer install`
 
@@ -12,13 +12,15 @@ Dalam Folder Project yang sudah di extract jalankan dari command prompt
 
 Tunggu hingga selesai (butuh koneksi internet)
 
+Import backup database di folder `dump`
+
 Ganti informasi di `app\config\database.php` bagian `pgsql`
 
 Setelah selesai, jalankan juga dari command prompt
 
 `php artisan serve`
 
-open browser dan ketik `localhost:8000`
+Open browser dan ketik `localhost:8000`
 
 Selesai. 
 
