@@ -10,13 +10,15 @@ Dalam Folder Project yang sudah di extract jalankan dari command prompt
 
 `composer dump-autoload -o`
 
-Tunggu hingga selesai (butuh koneksi internet!!!)
+Tunggu hingga selesai (butuh koneksi internet)
+
+Ganti informasi di `app\config\database.php` bagian `pgsql`
 
 Setelah selesai, jalankan juga dari command prompt
 
 `php artisan serve`
 
-open browser dan ketik localhost:8000
+open browser dan ketik `localhost:8000`
 
 Selesai. 
 
