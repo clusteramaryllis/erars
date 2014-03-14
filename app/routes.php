@@ -13,5 +13,25 @@
 
 Route::get('/', function()
 {
-	return View::make('hello');
+	return Redirect::to('login');
+});
+
+// Not Logged In State
+Route::group(array( 'before' => 'guest' ), function()
+{
+	// Admin
+	Route::get('login', 'AdminController@getLogin');
+	Route::post('login', 'AdminController@postLogin');
+});
+
+// Logged In State
+Route::group(array( 'before' => 'auth' ), function()
+{
+	// Cpanel
+	Route::get('cpanel', function(){
+		return 'Logged In';
+	});
+
+	// Logout
+	Route::any('logout', 'AdminController@requestLogout');
 });

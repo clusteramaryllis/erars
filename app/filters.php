@@ -38,6 +38,11 @@ Route::filter('auth', function()
 	if (Auth::guest()) return Redirect::guest('login');
 });
 
+Route::filter('guest', function()
+{
+	if (Auth::check()) return Redirect::to('cpanel');
+});
+
 
 Route::filter('auth.basic', function()
 {

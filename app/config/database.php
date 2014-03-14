@@ -26,7 +26,7 @@ return array(
 	|
 	*/
 
-	'default' => 'mysql',
+	'default' => 'pgsql',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -66,12 +66,13 @@ return array(
 		'pgsql' => array(
 			'driver'   => 'pgsql',
 			'host'     => 'localhost',
-			'database' => 'database',
-			'username' => 'root',
-			'password' => '',
+			'database' => 'semarang',
+			'username' => 'postgres',
+			'password' => 'postgres',
 			'charset'  => 'utf8',
 			'prefix'   => '',
 			'schema'   => 'public',
+			'port'     => '5432',
 		),
 
 		'sqlsrv' => array(
