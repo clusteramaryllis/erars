@@ -5,6 +5,8 @@ class User extends Eloquent {
 
 	protected $primaryKey = 'no_id';
 
+	public $incrementing = false;
+
 	protected $hidden = array('pass');
 
 	public $timestamps = false;

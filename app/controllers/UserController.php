@@ -8,13 +8,39 @@ class UserController extends \BaseController {
 		'P' => 'Perempuan'
 	);
 
+	protected $orderBy = array(
+		'' => 'Urutkan Berdasarkan',
+		'asc' => 'Ascending',
+		'desc' => 'Descending'
+	);
+
 	/**
 	 * Tampilan index user umum
 	 * @return Response
 	 */
 	public function getIndexUser()
 	{
-		return View::make('user.index_user');
+		$query = DB::table('user');
+
+		// User umum
+		$query->whereNull('grup');
+
+		// Ada query
+		if (Input::has('q')) {
+			$query->where('nama', 'LIKE', '%'. Input::get('q').'%');
+
+			// Ada urutan
+			if (Input::has('order_by')) {
+				$query->orderBy('nama', Input::get('order_by'));
+			}
+		}
+		
+		$users = $query->paginate(5);
+
+		return View::make('user.index_user', array(
+			'users' => $users,
+			'orderBy' => $this->orderBy
+		));
 	}
 
 	/**
@@ -65,6 +91,7 @@ class UserController extends \BaseController {
 			$user->tgl_lhr = date("Y-m-d", strtotime(Input::get('tgl_lhr')));
 			$user->gender = Input::get('gender');
 			$user->alamat = Input::get('alamat');
+			$user->pekerjaan = Input::get('pekerjaan');
 			$user->no_hp = Input::get('no_hp');
 			$user->email = Input::get('email');
 

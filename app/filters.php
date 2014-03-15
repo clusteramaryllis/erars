@@ -92,3 +92,17 @@ Validator::extend('phone', function($attribute, $value, $parameters){
 Validator::extend('alpha_space', function($attribute, $value, $parameters){
 	return preg_match('/^([a-z \.])+$/i', $value);
 });
+
+/*
+|--------------------------------------------------------------------------
+| View Filter
+|--------------------------------------------------------------------------
+|
+|
+*/
+
+// Let Pagination Handle the search query also
+View::composer(Paginator::getViewName(), function($view) {
+	$query = array_except( Input::query(), Paginator::getPageName() );
+	$view->paginator->appends($query);
+});

@@ -4,3 +4,13 @@
 #content {
 	background-color: #fff;
 }*/
+
+.form-inline-wide .form-group {
+	margin-right: 15px;
+}
+.form-inline-wide label{
+	font-weight: normal;
+}
+.centered {
+	text-align: center;
+}
