@@ -2,23 +2,37 @@
 
 Download & install [Composer](https://getcomposer.org/download/)
 
-Download project & extract
+Download project & extract di `namafolder` yang Anda inginkan
 
 Dalam folder project yang sudah di extract jalankan dari command prompt
 
-`composer install`
+`C:\xampp\htdocs\namafolder> composer install`
 
-`composer dump-autoload -o`
+`C:\xampp\htdocs\namafolder> composer dump-autoload -o`
 
 Tunggu hingga selesai (butuh koneksi internet)
 
-Import backup database di folder `dump`
+Import database terkini di folder `dump` (Jangan Lupa backup database lama)
 
 Ganti informasi di `app\config\database.php` bagian `pgsql`
 
+```php
+pgsql' => array(
+	'driver'   => 'pgsql',
+	'host'     => 'localhost',
+	'database' => 'namadatabase',
+	'username' => 'postgres',
+	'password' => '',
+	'charset'  => 'utf8',
+	'prefix'   => '',
+	'schema'   => 'public',
+	'port'     => '5432',
+)
+```
+
 Setelah selesai, jalankan juga dari command prompt
 
-`php artisan serve`
+`C:\xampp\htdocs\namafolder> php artisan serve`
 
 Open browser dan ketik `localhost:8000`
 
