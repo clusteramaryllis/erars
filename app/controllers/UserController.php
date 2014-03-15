@@ -14,6 +14,20 @@ class UserController extends \BaseController {
 		'desc' => 'Descending'
 	);
 
+	protected $rules = array(
+		'no_id' => 'required|min:16|max:16|unique:user,no_id',
+		'nama' => 'required|max:50|alpha_space',
+		'pass' => 'required|confirmed|max:32',
+		'pass_confirmation' => 'required',
+		'tmp_lhr' => 'required|alpha|max:15',
+		'tgl_lhr' => 'required|date_format:d-m-Y',
+		'gender' => 'required|max:1|in:L,P',
+		'alamat' => 'required|max:100',
+		'pekerjaan' => 'required|max:50|alpha_space',
+		'no_hp' => 'required|phone',
+		'email' => 'required|max:30|email|unique:user,email'
+	);
+
 	/**
 	 * Tampilan index user umum
 	 * @return Response
@@ -27,7 +41,7 @@ class UserController extends \BaseController {
 
 		// Ada query
 		if (Input::has('q')) {
-			$query->where('nama', 'LIKE', '%'. Input::get('q').'%');
+			$query->where('nama', 'LIKE', '%'. Input::get('q') .'%');
 
 			// Ada urutan
 			if (Input::has('order_by')) {
@@ -58,19 +72,7 @@ class UserController extends \BaseController {
 	 */
 	public function postCreateUser()
 	{
-		$rules = array(
-			'no_id' => 'required|min:16|max:16|unique:user,no_id',
-			'nama' => 'required|max:50|alpha_space',
-			'pass' => 'required|confirmed|max:32',
-			'pass_confirmation' => 'required',
-			'tmp_lhr' => 'required|alpha|max:15',
-			'tgl_lhr' => 'required|date_format:d-m-Y',
-			'gender' => 'required|max:1|in:L,P',
-			'alamat' => 'required|max:100',
-			'pekerjaan' => 'required|max:50|alpha_space',
-			'no_hp' => 'required|phone',
-			'email' => 'required|max:30|email|unique:user,email'
-		);
+		$rules = $this->rules;
 
 		$validator = Validator::make(Input::all(), $rules);
 
@@ -100,6 +102,80 @@ class UserController extends \BaseController {
 			Session::flash('success_message', 'User <b>'. $user->nama .'</b> berhasil disimpan');
 			return Redirect::action('UserController@getIndexUser');
 		}
+	}
+
+	/**
+	 * Tampilan edit user umum
+	 * @param  int $id
+	 * @return Response
+	 */
+	public function getEditUser($id)
+	{
+		$user = User::find($id);
+
+		return View::make('user.edit_user', array(
+			'gender' => $this->gender,
+			'user' => $user
+		));
+	}
+
+	/**
+	 * Aksi edit user umum
+	 * @param  int $id
+	 * @return Redirect
+	 */
+	public function putEditUser($id)
+	{
+		$rules = $this->rules;
+		// without no_id
+		unset($rules['no_id']);
+		// change email validator
+		$rules['email'] = 'required|max:30|email';
+
+		$validator = Validator::make(Input::all(), $rules);
+
+		if ($validator->fails()) 
+		{
+			return Redirect::back()
+				->withErrors($validator)
+				->withInput();
+		}
+		else
+		{
+			$user = User::find($id);
+
+			$user->nama = Input::get('nama');
+			$user->pass = Input::get('pass');
+			$user->tmp_lhr = Input::get('tmp_lhr');
+			$user->tgl_lhr = date("Y-m-d", strtotime(Input::get('tgl_lhr')));
+			$user->gender = Input::get('gender');
+			$user->alamat = Input::get('alamat');
+			$user->pekerjaan = Input::get('pekerjaan');
+			$user->no_hp = Input::get('no_hp');
+			$user->email = Input::get('email');
+
+			$user->save();
+
+			Session::flash('success_message', 'User <b>'. $user->nama .'</b> berhasil diperbaharui');
+			return Redirect::action('UserController@getIndexUser');
+		}
+	}
+
+	/**
+	 * Aksi delete user umum
+	 * @param  int $id
+	 * @return Redirect
+	 */
+	public function deleteDestroyUser($id)
+	{
+		$user = User::find($id);
+
+		$userNama = $user->nama;
+
+		$user->delete();
+
+		Session::flash('delete_message', 'User <b>'. $userNama .'</b> berhasil dihapus');
+		return Redirect::back();
 	}
 
 }

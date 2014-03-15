@@ -33,6 +33,9 @@ Route::group(array( 'before' => 'auth' ), function()
 	Route::get('cpanel/user/general', 'UserController@getIndexUser');
 	Route::get('cpanel/user/general/create', 'UserController@getCreateUser');
 	Route::post('cpanel/user/general/create', 'UserController@postCreateUser');
+	Route::get('cpanel/user/general/{id}/edit', 'UserController@getEditUser');
+	Route::put('cpanel/user/general/{id}/edit', 'UserController@putEditUser');
+	Route::delete('cpanel/user/general/{id}/destroy', 'UserController@deleteDestroyUser');
 
 	// Logout
 	Route::any('logout', 'AdminController@requestLogout');

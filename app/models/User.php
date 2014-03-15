@@ -7,7 +7,7 @@ class User extends Eloquent {
 
 	public $incrementing = false;
 
-	protected $hidden = array('pass');
+	// protected $hidden = array('pass');
 
 	public $timestamps = false;
 }
