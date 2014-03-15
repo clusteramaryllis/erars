@@ -17,7 +17,7 @@ Import database terkini di folder `dump` (Jangan Lupa backup database lama)
 Ganti informasi di `app\config\database.php` bagian `pgsql`
 
 ```php
-pgsql' => array(
+'pgsql' => array(
 	'driver'   => 'pgsql',
 	'host'     => 'localhost',
 	'database' => 'namadatabase',
