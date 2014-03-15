@@ -12,7 +12,7 @@ Dalam folder project yang sudah di extract jalankan dari command prompt
 
 Tunggu hingga selesai (butuh koneksi internet)
 
-Import database terkini di folder `dump` (Jangan Lupa backup database lama)
+Import database terkini di folder `dump` (Jangan lupa backup database lama)
 
 Ganti informasi di `app\config\database.php` bagian `pgsql`
 
