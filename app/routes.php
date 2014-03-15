@@ -28,9 +28,11 @@ Route::group(array( 'before' => 'guest' ), function()
 Route::group(array( 'before' => 'auth' ), function()
 {
 	// Cpanel
-	Route::get('cpanel', function(){
-		return 'Logged In';
-	});
+	
+	// User
+	Route::get('cpanel/user/general', 'UserController@getIndexUser');
+	Route::get('cpanel/user/general/create', 'UserController@getCreateUser');
+	Route::post('cpanel/user/general/create', 'UserController@postCreateUser');
 
 	// Logout
 	Route::any('logout', 'AdminController@requestLogout');

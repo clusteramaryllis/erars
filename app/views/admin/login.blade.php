@@ -5,6 +5,7 @@
 @section('bottom_css')
 	@parent
 	<link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}">	
+	<link rel="stylesheet" href="{{ asset('assets/css/theme.css') }}">	
 @stop
 
 @section('content')
@@ -46,7 +47,7 @@
 					</div>
 					@endif
 					{{-- end error message --}}
-					
+
 					<div class="row">
 						<div class="col-xs-12 col-sm-12 col-md-12">
 							{{ Form::button('Login', array(

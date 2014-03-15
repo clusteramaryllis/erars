@@ -77,3 +77,18 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
+
+/*
+|--------------------------------------------------------------------------
+| Validator Filter
+|--------------------------------------------------------------------------
+|
+|
+*/
+Validator::extend('phone', function($attribute, $value, $parameters){
+	return preg_match('/^([0-9-+])+$/i', $value);
+});
+
+Validator::extend('alpha_space', function($attribute, $value, $parameters){
+	return preg_match('/^([a-z \.])+$/i', $value);
+});
