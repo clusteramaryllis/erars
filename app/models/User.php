@@ -10,4 +10,10 @@ class User extends Eloquent {
 	// protected $hidden = array('pass');
 
 	public $timestamps = false;
+
+	// relasi
+	public function facility()
+	{
+		return $this->belongsTo('Facility', 'tmp_dinas');
+	}
 }
