@@ -14,3 +14,27 @@
 .centered {
 	text-align: center;
 }
+
+.icon-panel {
+	text-align: center;
+	display: block;
+	padding: 10px;
+	background: #eee;
+}
+
+.icon-panel:hover {
+	background: #aaa;	
+}
+
+.icon-panel i {
+	font-size: 8em
+}
+
+.same {
+	color: #333;
+}
+
+.same:hover {
+	color: #333;
+	text-decoration: none;
+}

@@ -47,6 +47,18 @@ class UserController extends \BaseController {
 	}
 
 	/**
+	 * Tampilan index
+	 * @return Response
+	 */
+	public function getIndex()
+	{
+		return View::make('user.index');
+	}
+
+	// =============================================================================================
+	// | Umum                                                                                      |
+	// =============================================================================================
+	/**
 	 * Tampilan index user umum
 	 * @return Response
 	 */

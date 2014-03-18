@@ -20,7 +20,7 @@
 			</ul>
 
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="#"><i class="fa fa-sign-out"></i> Logout</a></li>
+				<li><a href="{{ action('AdminController@requestLogout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
 			</ul>
 
 		</div><!-- ./navbar-collapse -->

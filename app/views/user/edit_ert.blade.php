@@ -1,5 +1,5 @@
 @extends('layouts.cpanel')
-@section('title','Edit User Umum | ' . $user->nama)
+@section('title','Edit User ERT | ' . $user->nama)
 @section('body_class','cpanel edit-user')
 
 @section('bottom_css')
@@ -80,8 +80,8 @@
   	<div class="col-md-12">
 	    <div class="btn-group">
 	      <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
-	      <a href="#" class="btn btn-default">User</a>
-	      <a href="{{ action('UserController@getIndexERT') }}" class="btn btn-default">Umum</a>
+	      <a href="{{ action('UserController@getIndex') }}" class="btn btn-default">User</a>
+	      <a href="{{ action('UserController@getIndexERT') }}" class="btn btn-default">ERT</a>
 	      <a href="#" class="btn btn-primary active">Edit</a>
 	    </div>
 	    <hr>

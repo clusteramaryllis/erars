@@ -1,5 +1,5 @@
 @extends('layouts.cpanel')
-@section('title','Indeks User Umum')
+@section('title','Indeks User ERT')
 @section('body_class','cpanel index-user')
 
 @section('bottom_css')
@@ -82,7 +82,7 @@
   	<div class="col-md-12 clearfix">
 	    <div class="btn-group">
 	      <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
-	      <a href="#" class="btn btn-default">User</a>
+	      <a href="{{ action('UserController@getIndex') }}" class="btn btn-default">User</a>
 	      <a href="#" class="btn btn-primary active">ERT</a>
 	    </div>
 	    <div class="pull-right">

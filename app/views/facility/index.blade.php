@@ -1,6 +1,6 @@
 @extends('layouts.cpanel')
-@section('title','Indeks User Umum')
-@section('body_class','cpanel index-user')
+@section('title','Indeks Fasilitas')
+@section('body_class','cpanel index-facility')
 
 @section('bottom_css')
 	@parent
@@ -54,7 +54,7 @@
 
 			bootbox.dialog({
 				title: "Konfirmasi",
-				message: "Apa Anda yakin akan menghapus user " + name,
+				message: "Apa Anda yakin akan menghapus fasilitas " + name,
 				buttons: {
 					yes: {
 						label: "Ya",
@@ -82,12 +82,11 @@
   	<div class="col-md-12 clearfix">
 	    <div class="btn-group">
 	      <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
-	      <a href="{{ action('UserController@getIndex') }}" class="btn btn-default">User</a>
-	      <a href="#" class="btn btn-primary active">Umum</a>
+	      <a href="#" class="btn btn-primary active">Fasilitas</a>
 	    </div>
 	    <div class="pull-right">
-	    	<a href="{{ action('UserController@getCreateUser') }}" class="btn btn-success">
-	    		<i class="fa fa-plus"></i> Tambah User
+	    	<a href="{{ action('FacilityController@getCreate') }}" class="btn btn-success">
+	    		<i class="fa fa-plus"></i> Tambah Fasilitas
 	    	</a>
 	    </div>
 	    <hr>
@@ -107,6 +106,15 @@
 					{{ Form::text('q', Input::has('q') ? Input::get('q') : '', array(
 						'class' => 'form-control'
 					)) }}
+				</div>
+
+				<div class="form-group">
+					{{ Form::label('group_by', 'Pilih Grup', array(
+						'class' => 'sr-only'
+					)) }}
+					{{ Form::select('group_by', $group, Input::has('group_by') ? Input::get('group_by') : '', array(
+						'class' => 'form-control'
+					))}}
 				</div>
 
 				<div class="form-group">
@@ -130,32 +138,30 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			@if($users->count())
+			@if($facilities->count())
 			<div class="table-responsive">
 				<table class="table table-striped table-bordered">
 					<thead>
 						<tr>
-							<th>No ID</th>
 							<th>Nama</th>
+							<th>Tipe</th>
 							<th>Alamat</th>
-							<th>Pekerjaan</th>
-							<th>No HP</th>
+							<th>Telepon</th>
 							<th>Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
-						@foreach ($users as $user)
+						@foreach ($facilities as $facility)
 						<tr>
-							<td>{{ $user->no_id }}</td>
-							<td>{{ $user->nama }}</td>
-							<td>{{ $user->alamat }}</td>
-							<td>{{ $user->pekerjaan }}</td>
-							<td>{{ $user->no_hp }}</td>
+							<td>{{ $facility->nama }}</td>
+							<td>{{ $group[$facility->type] }}</td>
+							<td>{{ $facility->alamat }}</td>
+							<td>{{ $facility->telp }}</td>
 							<td width="20%">
-								<a href="{{ action('UserController@getEditUser', $user->no_id) }}" class="btn btn-info btn-sm">
+								<a href="{{ action('FacilityController@getEdit', $facility->gid) }}" class="btn btn-info btn-sm">
 									<i class="fa fa-edit"></i> Lihat / Edit
 								</a>
-								<a href="{{ action('UserController@deleteDestroyUser', $user->no_id) }}" class="btn btn-danger btn-sm delete-action" data-name="{{ $user->nama }}">
+								<a href="{{ action('FacilityController@deleteDestroy', $facility->gid) }}" class="btn btn-danger btn-sm delete-action" data-name="{{ $facility->nama }}">
 									<i class="fa fa-trash-o"></i> Hapus
 								</a>
 							</td>
@@ -173,7 +179,7 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="centered">
-				{{ $users->links() }}
+				{{ $facilities->links() }}
 			</div>
 		</div>
 	</div>

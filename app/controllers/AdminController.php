@@ -61,6 +61,7 @@ class AdminController extends \BaseController {
 	public function requestLogout()
 	{
 		Auth::logout();
-		return Redirect::guest('login');
+		Session::flush();
+		return Redirect::to('login');
 	}
 }

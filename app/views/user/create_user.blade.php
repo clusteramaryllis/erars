@@ -52,7 +52,7 @@
   	<div class="col-md-12">
 	    <div class="btn-group">
 	      <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
-	      <a href="#" class="btn btn-default">User</a>
+	      <a href="{{ action('UserController@getIndex') }}" class="btn btn-default">User</a>
 	      <a href="{{ action('UserController@getIndexUser') }}" class="btn btn-default">Umum</a>
 	      <a href="#" class="btn btn-primary active">Tambah</a>
 	    </div>

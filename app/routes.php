@@ -29,7 +29,17 @@ Route::group(array( 'before' => 'auth' ), function()
 {
 	// Cpanel
 	
+	// Fasilitas
+	Route::get('cpanel/facility', 'FacilityController@getIndex');
+	Route::get('cpanel/facility/create', 'FacilityController@getCreate');
+	Route::post('cpanel/facility/create', 'FacilityController@postCreate');
+	Route::get('cpanel/facility/{id}/edit', 'FacilityController@getEdit');
+	Route::put('cpanel/facility/{id}/edit', 'FacilityController@putEdit');
+	Route::delete('cpanel/facility/{id}/destroy', 'FacilityController@deleteDestroy');
+
 	// User
+	Route::get('cpanel/user', 'UserController@getIndex');
+	
 	Route::get('cpanel/user/general', 'UserController@getIndexUser');
 	Route::get('cpanel/user/general/create', 'UserController@getCreateUser');
 	Route::post('cpanel/user/general/create', 'UserController@postCreateUser');
