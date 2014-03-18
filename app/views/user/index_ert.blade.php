@@ -161,10 +161,10 @@
 							<td>{{ $group[$user->grup] }}</td>
 							<td>{{ $user->no_hp }}</td>
 							<td width="20%">
-								<a href="{{ action('UserController@getEditUser', $user->no_id) }}" class="btn btn-info btn-sm">
+								<a href="{{ action('UserController@getEditERT', $user->no_id) }}" class="btn btn-info btn-sm">
 									<i class="fa fa-edit"></i> Lihat / Edit
 								</a>
-								<a href="{{ action('UserController@deleteDestroyUser', $user->no_id) }}" class="btn btn-danger btn-sm delete-action" data-name="{{ $user->nama }}">
+								<a href="{{ action('UserController@deleteDestroyERT', $user->no_id) }}" class="btn btn-danger btn-sm delete-action" data-name="{{ $user->nama }}">
 									<i class="fa fa-trash-o"></i> Hapus
 								</a>
 							</td>

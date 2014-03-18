@@ -317,11 +317,13 @@ class UserController extends \BaseController {
 		unset($this->group[4]);
 
 		$user = User::find($id);
+		$facilities = Facility::all();
 
-		return View::make('user.edit_user', array(
+		return View::make('user.edit_ert', array(
 			'gender' => $this->gender,
 			'group' => $this->group,
-			'user' => $user
+			'user' => $user,
+			'facilities' => $facilities
 		));
 	}
 

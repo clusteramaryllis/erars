@@ -1,6 +1,6 @@
 @extends('layouts.cpanel')
-@section('title','Tambah User ERT')
-@section('body_class','cpanel create-ert')
+@section('title','Edit User Umum | ' . $user->nama)
+@section('body_class','cpanel edit-user')
 
 @section('bottom_css')
 	@parent
@@ -69,7 +69,6 @@
 				onFirstTime = false;
 			}
 		}).trigger('change');
-		
 	});
 	</script>
 @stop
@@ -82,16 +81,17 @@
 	    <div class="btn-group">
 	      <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
 	      <a href="#" class="btn btn-default">User</a>
-	      <a href="{{ action('UserController@getIndexERT') }}" class="btn btn-default">ERT</a>
-	      <a href="#" class="btn btn-primary active">Tambah</a>
+	      <a href="{{ action('UserController@getIndexERT') }}" class="btn btn-default">Umum</a>
+	      <a href="#" class="btn btn-primary active">Edit</a>
 	    </div>
 	    <hr>
   	</div>
 	</div>
 
-	{{ Form::open(array(
-		'action' => 'UserController@postCreateERT',
-		'class' => 'form-horizontal'
+	{{ Form::model($user, array(
+		'action' => array('UserController@putEditERT', $user->no_id),
+		'class' => 'form-horizontal',
+		'method' => 'put'
 	)) }}
 	<div class="row">
 		<div class="col-md-12">
@@ -107,12 +107,14 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::text('no_id', Input::old('no_id', ''), array(
+									{{ Form::text('no_id', null, array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('no_id') ? 'tooltip' : '',
 										'data-title' => $errors->has('no_id') ? $errors->first('no_id') : '',
 										'placeholder' => 'Ketikkan No ID Anda',
-										'maxlength' => '16'
+										'maxlength' => '16',
+										'disabled' => 'disabled',
+										'readonly' => 'readonly'
 									)) }}
 								</div>
 							</div>
@@ -122,7 +124,7 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::text('nama', Input::old('nama', ''), array(
+									{{ Form::text('nama', null, array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('nama') ? 'tooltip' : '',
 										'data-title' => $errors->has('nama') ? $errors->first('nama') : '',
@@ -136,12 +138,14 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::password('pass', array(
+									{{-- Using Form::password model doesn't work --}}
+									{{-- Form::password('pass', array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('pass') ? 'tooltip' : '',
 										'data-title' => $errors->has('pass') ? $errors->first('pass') : '',
 										'placeholder' => 'Ketikkan Password Anda'
-									)) }}
+									)) --}}
+									<input type="password" name="pass" id="pass" class="form-control has-tooltip" data-toggle="{{ $errors->has('pass') ? 'tooltip' : '' }}" data-title="{{ $errors->has('pass') ? $errors->first('pass') : '' }}" placeholder="Ketikkan Password Anda" value="{{ Input::old('pass', $user->pass) }}">
 								</div>
 							</div>
 
@@ -150,12 +154,13 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::password('pass_confirmation', array(
+									{{-- Form::password('pass_confirmation', array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('pass_confirmation') ? 'tooltip' : '',
 										'data-title' => $errors->has('pass_confirmation') ? $errors->first('pass_confirmation') : '',
 										'placeholder' => 'Ketikkan Konfirmasi Password Anda'
-									)) }}
+									)) --}}
+									<input type="password" name="pass_confirmation" id="pass_confirmation" class="form-control has-tooltip" data-toggle="{{ $errors->has('pass_confirmation') ? 'tooltip' : '' }}" data-title="{{ $errors->has('pass_confirmation') ? $errors->first('pass_confirmation') : '' }}" placeholder="Ketikkan Password Anda" value="{{ Input::old('pass_confirmation', $user->pass) }}">
 								</div>
 							</div>
 
@@ -164,7 +169,7 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::text('tmp_lhr', Input::old('tmp_lhr', ''), array(
+									{{ Form::text('tmp_lhr', null, array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('tmp_lhr') ? 'tooltip' : '',
 										'data-title' => $errors->has('tmp_lhr') ? $errors->first('tmp_lhr') : '',
@@ -178,7 +183,7 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::text('tgl_lhr', Input::old('tgl_lhr', ''), array(
+									{{ Form::text('tgl_lhr', Input::old('tgl_lhr', date('d-m-Y', strtotime($user->tgl_lhr))), array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('tgl_lhr') ? 'tooltip' : '',
 										'data-title' => $errors->has('tgl_lhr') ? $errors->first('tgl_lhr') : '',
@@ -194,7 +199,7 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::select('gender', $gender, Input::old('gender', ''), array(
+									{{ Form::select('gender', $gender, null, array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('gender') ? 'tooltip' : '',
 										'data-title' => $errors->has('gender') ? $errors->first('gender') : ''
@@ -211,7 +216,7 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::textarea('alamat', Input::old('alamat', ''), array(
+									{{ Form::textarea('alamat', null, array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('alamat') ? 'tooltip' : '',
 										'data-title' => $errors->has('alamat') ? $errors->first('alamat') : '',
@@ -226,7 +231,7 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::select('grup', $group, Input::old('grup', ''), array(
+									{{ Form::select('grup', $group, null, array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('grup') ? 'tooltip' : '',
 										'data-title' => $errors->has('grup') ? $errors->first('grup') : ''
@@ -242,7 +247,7 @@
 									<select name="tmp_dinas" id="tmp_dinas" class="form-control has-tooltip" data-toggle="{{ $errors->has('tmp_dinas') ? 'tooltip' : '' }}" data-title="{{ $errors->has('tmp_dinas') ? $errors->first('tmp_dinas') : '' }}">
 									<option value="" data-type="All">Pilih Kantor</option>
 									@foreach ($facilities as $facility)
-										<option value="{{ $facility->gid }}" {{ ( intval(Input::old('tmp_dinas')) === $facility->gid) ? 'selected="selected"' : '' }} data-type="{{ $facility->type }}">{{ $facility->nama}}</option>
+										<option value="{{ $facility->gid }}" {{ ( intval( Input::old('tmp_dinas') ?: $user->tmp_dinas ) === $facility->gid) ? 'selected="selected"' : '' }} data-type="{{ $facility->type }}">{{ $facility->nama}}</option>
 									@endforeach	
 									</select>
 								</div>
@@ -253,7 +258,7 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::text('no_induk', Input::old('no_induk', ''), array(
+									{{ Form::text('no_induk', null, array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('no_induk') ? 'tooltip' : '',
 										'data-title' => $errors->has('no_induk') ? $errors->first('no_induk') : '',
@@ -267,7 +272,7 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::text('no_hp', Input::old('no_hp', ''), array(
+									{{ Form::text('no_hp', null, array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('no_hp') ? 'tooltip' : '',
 										'data-title' => $errors->has('no_hp') ? $errors->first('no_hp') : '',
@@ -281,7 +286,7 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::text('email', Input::old('email', ''), array(
+									{{ Form::text('email', null, array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('email') ? 'tooltip' : '',
 										'data-title' => $errors->has('email') ? $errors->first('email') : '',
