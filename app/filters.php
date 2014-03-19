@@ -93,6 +93,10 @@ Validator::extend('alpha_space', function($attribute, $value, $parameters){
 	return preg_match('/^([a-z \.])+$/i', $value);
 });
 
+Validator::extend('coordinate', function($attribute, $value, $parameters){
+	return preg_match('/^([0-9-\.])+$/i', $value);
+});
+
 /*
 |--------------------------------------------------------------------------
 | View Filter

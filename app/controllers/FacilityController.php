@@ -15,6 +15,17 @@ class FacilityController extends \BaseController {
 		'F' => 'Damkar'
 	);
 
+	protected $rules = array(
+		'nama' => 'required|max:30|alpha_space',
+		'type' => 'required|max:1|in:P,M,F',
+		'alamat' => 'required|max:50',
+		'telp' => 'required|max:20|phone',
+		'lat' => 'required|coordinate',
+		'lng' => 'required|coordinate'
+	);
+
+	protected $srid = 0;
+
 	/**
 	 * Tampilan Indeks Fasilitas
 	 * @return Response
@@ -53,7 +64,15 @@ class FacilityController extends \BaseController {
 	 */
 	public function getCreate()
 	{
+		// Generate Geo-JSON
+		$streets = DB::table('roads_smg')
+			->select(DB::raw('gid, street_name, dir, ST_AsGeoJSON(the_geom) as geo_json'))
+			->get();
 
+		return View::make('facility.create', array(
+			'type' => $this->group,
+			'streets' => $streets
+		));
 	}
 
 	/**
@@ -62,7 +81,31 @@ class FacilityController extends \BaseController {
 	 */
 	public function postCreate()
 	{
+		$rules = $this->rules;
 
+		$validator = Validator::make(Input::all(), $rules);
+
+		if ($validator->fails()) 
+		{
+			return Redirect::back()
+				->withErrors($validator)
+				->withInput();
+		}
+		else
+		{
+			$facility = new Facility;
+
+			$facility->nama = Input::get('nama');
+			$facility->type = Input::get('type');
+			$facility->alamat = Input::get('alamat');
+			$facility->telp = Input::get('telp');
+			$facility->the_geom = DB::raw('ST_SetSRID(ST_MakePoint(' . Input::get('lat') . ',' . Input::get('lng') . '), ' . $this->srid . ')');
+
+			$facility->save();
+
+			Session::flash('success_message', 'Fasilitas <b>'. $facility->nama .'</b> berhasil disimpan');
+			return Redirect::action('FacilityController@getIndex');
+		}
 	}
 
 	/**
@@ -71,7 +114,21 @@ class FacilityController extends \BaseController {
 	 */
 	public function getEdit($id)
 	{
+		// Generate Geo-JSON
+		$streets = DB::table('roads_smg')
+			->select(DB::raw('gid, street_name, dir, ST_AsGeoJSON(the_geom) as geo_json'))
+			->get();
 
+		$facility = DB::table('em_facility')
+			->select(DB::raw('gid, nama, type, alamat, telp, ST_X(the_geom) as lat, ST_Y(the_geom) as lng'))
+			->where('gid', $id)
+			->first();
+
+		return View::make('facility.edit', array(
+			'type' => $this->group,
+			'streets' => $streets,
+			'facility' => $facility
+		));
 	}
 
 	/**
@@ -80,7 +137,31 @@ class FacilityController extends \BaseController {
 	 */
 	public function putEdit($id)
 	{
+		$rules = $this->rules;
 
+		$validator = Validator::make(Input::all(), $rules);
+
+		if ($validator->fails()) 
+		{
+			return Redirect::back()
+				->withErrors($validator)
+				->withInput();
+		}
+		else
+		{
+			$facility = Facility::find($id);
+
+			$facility->nama = Input::get('nama');
+			$facility->type = Input::get('type');
+			$facility->alamat = Input::get('alamat');
+			$facility->telp = Input::get('telp');
+			$facility->the_geom = DB::raw('ST_SetSRID(ST_MakePoint(' . Input::get('lat') . ',' . Input::get('lng') . '), ' . $this->srid . ')');
+
+			$facility->save();
+
+			Session::flash('success_message', 'Fasilitas <b>'. $facility->nama .'</b> berhasil diperbaharui');
+			return Redirect::action('FacilityController@getIndex');
+		}
 	}
 
 	/**
@@ -89,7 +170,14 @@ class FacilityController extends \BaseController {
 	 */
 	public function deleteDestroy($id)
 	{
+		$facility = Facility::find($id);
 
+		$facilityNama = $facility->nama;
+
+		$facility->delete();
+
+		Session::flash('delete_message', 'Fasilitas <b>'. $facilityNama .'</b> berhasil dihapus');
+		return Redirect::back();
 	}
 
 }
