@@ -1,6 +1,6 @@
 @extends('layouts.cpanel')
-@section('title','Tambah Tipe Emergency')
-@section('body_class','cpanel create-em-type')
+@section('title','Edit Tipe Emergency | ' . $em_type->type_name)
+@section('body_class','cpanel edit-em-type')
 
 @section('bottom_css')
 	@parent
@@ -55,13 +55,13 @@
 	      <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
 	      <a href="{{ action('EmergencyController@getIndex') }}" class="btn btn-default">Emergency</a>
 	      <a href="{{ action('EmergencyController@getIndexType') }}" class="btn btn-default">Tipe Emergency</a>
-	      <a href="#" class="btn btn-primary active">Tambah</a>
+	      <a href="#" class="btn btn-primary active">Edit</a>
 	    </div>
 	    <hr>
   	</div>
 	</div>
 
-	{{ Form::open(array(
+	{{ Form::model($em_type, array(
 		'action' => 'EmergencyController@postCreateType',
 		'class' => 'form-horizontal'
 	)) }}
@@ -79,7 +79,7 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::text('type_name', Input::old('type_name', ''), array(
+									{{ Form::text('type_name', null, array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('type_name') ? 'tooltip' : '',
 										'data-title' => $errors->has('type_name') ? $errors->first('type_name') : '',
@@ -95,7 +95,7 @@
 								<div class="col-md-8">
 									@foreach ($groupType as $key => $gt)
 									<div class="checkbox">
-										<label>{{ Form::checkbox($key, '1') }} {{ $gt }}</label>
+										<label>{{ Form::checkbox($key, '1', null) }} {{ $gt }}</label>
 									</div>	
 									@endforeach
 								</div>
