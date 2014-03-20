@@ -29,6 +29,16 @@ Route::group(array( 'before' => 'auth' ), function()
 {
 	// Cpanel
 	
+	// Emergency
+	Route::get('cpanel/emergency', 'EmergencyController@getIndex');
+
+	Route::get('cpanel/emergency/type', 'EmergencyController@getIndexType');
+	Route::get('cpanel/emergency/type/create', 'EmergencyController@getCreateType');
+	Route::post('cpanel/emergency/type/create', 'EmergencyController@postCreateType');
+	Route::get('cpanel/emergency/type/{id}/edit', 'EmergencyController@getEditType');
+	Route::put('cpanel/emergency/type/{id}/edit', 'EmergencyController@putEditType');
+	Route::delete('cpanel/emergency/type/{id}/destroy', 'EmergencyController@deleteDestroyType');
+	
 	// Fasilitas
 	Route::get('cpanel/facility', 'FacilityController@getIndex');
 	Route::get('cpanel/facility/create', 'FacilityController@getCreate');
