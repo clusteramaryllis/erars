@@ -65,9 +65,7 @@ class FacilityController extends \BaseController {
 	public function getCreate()
 	{
 		// Generate Geo-JSON
-		$streets = DB::table('roads_smg')
-			->select(DB::raw('gid, street_name, dir, ST_AsGeoJSON(the_geom) as geo_json'))
-			->get();
+		$streets = RoadSmg::withGeoJson();
 
 		return View::make('facility.create', array(
 			'type' => $this->group,
@@ -99,7 +97,7 @@ class FacilityController extends \BaseController {
 			$facility->type = Input::get('type');
 			$facility->alamat = Input::get('alamat');
 			$facility->telp = Input::get('telp');
-			$facility->the_geom = DB::raw('ST_SetSRID(ST_MakePoint(' . Input::get('lat') . ',' . Input::get('lng') . '), ' . $this->srid . ')');
+			$facility->the_geom = DB::raw('ST_SetSRID(ST_MakePoint(' . Input::get('lng') . ',' . Input::get('lat') . '), ' . $this->srid . ')');
 
 			$facility->save();
 
@@ -115,14 +113,11 @@ class FacilityController extends \BaseController {
 	public function getEdit($id)
 	{
 		// Generate Geo-JSON
-		$streets = DB::table('roads_smg')
-			->select(DB::raw('gid, street_name, dir, ST_AsGeoJSON(the_geom) as geo_json'))
-			->get();
+		$streets = RoadSmg::withGeoJson();
 
-		$facility = DB::table('em_facility')
-			->select(DB::raw('gid, nama, type, alamat, telp, ST_X(the_geom) as lat, ST_Y(the_geom) as lng'))
-			->where('gid', $id)
-			->first();
+		// Converts geometry to latitude or longitude
+		$facility = Facility::findWithGeomToLatLng($id);
+			
 
 		return View::make('facility.edit', array(
 			'type' => $this->group,
@@ -155,7 +150,7 @@ class FacilityController extends \BaseController {
 			$facility->type = Input::get('type');
 			$facility->alamat = Input::get('alamat');
 			$facility->telp = Input::get('telp');
-			$facility->the_geom = DB::raw('ST_SetSRID(ST_MakePoint(' . Input::get('lat') . ',' . Input::get('lng') . '), ' . $this->srid . ')');
+			$facility->the_geom = DB::raw('ST_SetSRID(ST_MakePoint(' . Input::get('lng') . ',' . Input::get('lat') . '), ' . $this->srid . ')');
 
 			$facility->save();
 

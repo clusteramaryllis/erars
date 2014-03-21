@@ -73,7 +73,7 @@
     		zoom: 13,
     		maxZoom: 16,
     		minZoom:13
-		}).setView([-6.98250, 110.43011], 13);
+		});
 
 		// set marker position
 		@if(Input::old('lat') && Input::old('lng'))
@@ -81,6 +81,8 @@
 		@else
 			var markerPosition = map.getCenter();
 		@endif
+
+		map.setView(markerPosition, 13);
 
 		// draw marker
 		var marker = L.marker(markerPosition).addTo(map);
