@@ -1,6 +1,6 @@
 @extends('layouts.cpanel')
-@section('title','Edit Fasilitas | '. $facility->nama)
-@section('body_class','cpanel edit-facility')
+@section('title','Tambah Emergency')
+@section('body_class','cpanel create-em')
 
 @section('bottom_css')
 	@parent
@@ -76,12 +76,10 @@
 		});
 
 		// set marker position
-		@if(Input::old('lat') && Input::old('lng'))
-			var markerPosition = [{{ Input::old('lat') }}, {{ Input::old('lng') }}];
-		@elseif(!$facility->lat || !$facility->lng)
-			var markerPosition = map.getCenter();
+		@if(Input::old('lat') && Input::old('lon'))
+			var markerPosition = [{{ Input::old('lat') }}, {{ Input::old('lon') }}];
 		@else
-			var markerPosition = [{{ $facility->lat }}, {{ $facility->lng }}];
+			var markerPosition = map.getCenter();
 		@endif
 
 		map.setView(markerPosition, 13);
@@ -120,17 +118,17 @@
   	<div class="col-md-12">
 	    <div class="btn-group">
 	      <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
-	      <a href="{{ action('FacilityController@getIndex') }}" class="btn btn-default">Fasilitas</a>
-	      <a href="#" class="btn btn-primary active">Edit</a>
+	      <a href="{{ action('EmergencyController@getIndex') }}" class="btn btn-default">Emergency</a>
+	      <a href="{{ action('EmergencyController@getIndexEmergency') }}" class="btn btn-default">Kasus</a>
+	      <a href="#" class="btn btn-primary active">Tambah</a>
 	    </div>
 	    <hr>
   	</div>
 	</div>
 
-	{{ Form::model($facility, array(
-		'action' => array('FacilityController@putEdit', $facility->gid),
-		'class' => 'form-horizontal',
-		'method' => 'put'
+	{{ Form::open(array(
+		'action' => 'EmergencyController@postCreateEmergency',
+		'class' => 'form-horizontal'
 	)) }}
 	<div class="row">
 		<div class="col-md-12">
@@ -141,58 +139,15 @@
 					<div class="row">
 						<div class="col-md-5">
 
-							<div class="form-group {{ $errors->has('nama') ? 'has-error' : '' }}">
-								{{ Form::label('nama', 'Nama', array(
-									'class' => 'control-label col-md-4'
-								)) }}
-								<div class="col-md-8">
-									{{ Form::text('nama', null, array(
-										'class' => 'form-control has-tooltip',
-										'data-toggle' => $errors->has('nama') ? 'tooltip' : '',
-										'data-title' => $errors->has('nama') ? $errors->first('nama') : '',
-										'placeholder' => 'Ketikkan Nama Fasilitas'
-									)) }}
-								</div>
-							</div>
-
 							<div class="form-group {{ $errors->has('type') ? 'has-error' : '' }}">
 								{{ Form::label('type', 'Tipe', array(
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::select('type', $type, null, array(
+									{{ Form::select('type', $em_types, Input::old('type', ''), array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('type') ? 'tooltip' : '',
 										'data-title' => $errors->has('type') ? $errors->first('type') : ''
-									)) }}
-								</div>
-							</div>
-
-							<div class="form-group {{ $errors->has('alamat') ? 'has-error' : '' }}">
-								{{ Form::label('alamat', 'Alamat', array(
-									'class' => 'control-label col-md-4'
-								)) }}
-								<div class="col-md-8">
-									{{ Form::textarea('alamat', null, array(
-										'class' => 'form-control has-tooltip',
-										'data-toggle' => $errors->has('alamat') ? 'tooltip' : '',
-										'data-title' => $errors->has('alamat') ? $errors->first('alamat') : '',
-										'placeholder' => 'Ketikkan Alamat Fasilitas',
-										'rows' => '3'
-									)) }}
-								</div>
-							</div>
-
-							<div class="form-group {{ $errors->has('telp') ? 'has-error' : '' }}">
-								{{ Form::label('telp', 'Telpon', array(
-									'class' => 'control-label col-md-4'
-								)) }}
-								<div class="col-md-8">
-									{{ Form::text('telp', null, array(
-										'class' => 'form-control has-tooltip',
-										'data-toggle' => $errors->has('telp') ? 'tooltip' : '',
-										'data-title' => $errors->has('telp') ? $errors->first('telp') : '',
-										'placeholder' => 'Ketikkan No Telpon Fasilitas'
 									)) }}
 								</div>
 							</div>
@@ -202,7 +157,7 @@
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::text('lat', null, array(
+									{{ Form::text('lat', Input::old('lat', ''), array(
 										'class' => 'form-control has-tooltip',
 										'data-toggle' => $errors->has('lat') ? 'tooltip' : '',
 										'data-title' => $errors->has('lat') ? $errors->first('lat') : '',
@@ -212,17 +167,32 @@
 								</div>
 							</div>
 
-							<div class="form-group {{ $errors->has('lng') ? 'has-error' : '' }}">
-								{{ Form::label('lng', 'Longitude', array(
+							<div class="form-group {{ $errors->has('lon') ? 'has-error' : '' }}">
+								{{ Form::label('lon', 'Longitude', array(
 									'class' => 'control-label col-md-4'
 								)) }}
 								<div class="col-md-8">
-									{{ Form::text('lng', null, array(
+									{{ Form::text('lon', Input::old('lon', ''), array(
 										'class' => 'form-control has-tooltip',
-										'data-toggle' => $errors->has('lng') ? 'tooltip' : '',
-										'data-title' => $errors->has('lng') ? $errors->first('lng') : '',
+										'data-toggle' => $errors->has('lon') ? 'tooltip' : '',
+										'data-title' => $errors->has('lon') ? $errors->first('lon') : '',
 										'placeholder' => 'Koordinat Bujur',
 										'readonly' => 'readonly'
+									)) }}
+								</div>
+							</div>
+
+							<div class="form-group {{ $errors->has('desc') ? 'has-error' : '' }}">
+								{{ Form::label('desc', 'Deskripsi', array(
+									'class' => 'control-label col-md-4'
+								)) }}
+								<div class="col-md-8">
+									{{ Form::textarea('desc', Input::old('desc', ''), array(
+										'class' => 'form-control has-tooltip',
+										'data-toggle' => $errors->has('desc') ? 'tooltip' : '',
+										'data-title' => $errors->has('desc') ? $errors->first('desc') : '',
+										'placeholder' => 'Ketikkan Deskripsi Emergency',
+										'rows' => '7'
 									)) }}
 								</div>
 							</div>
@@ -245,7 +215,7 @@
 				{{ Form::button('Batal', array(
 				  'type' => 'button', 
 				  'class' => 'btn btn-default pull-right', 
-				  'onclick' => 'window.location="'. action('FacilityController@getIndex') .'"'
+				  'onclick' => 'window.location="'. action('EmergencyController@getIndexEmergency') .'"'
 				 )) }}
 				{{ Form::button('Simpan', array(
 				  'type' => 'submit', 

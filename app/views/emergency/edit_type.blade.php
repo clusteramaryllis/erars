@@ -62,8 +62,9 @@
 	</div>
 
 	{{ Form::model($em_type, array(
-		'action' => 'EmergencyController@postCreateType',
-		'class' => 'form-horizontal'
+		'action' => array('EmergencyController@putEditType', $em_type->type_id),
+		'class' => 'form-horizontal',
+		'method' => 'put'
 	)) }}
 	<div class="row">
 		<div class="col-md-12">

@@ -15,6 +15,8 @@ class EmergencyController extends \BaseController {
 		3 => 'Damkar'
 	);
 
+	protected $filterBy = array();
+
 	protected $searchBy = array(
 		'' => 'Pilih Kolom',
 		'type_id' => 'No ID',
@@ -27,9 +29,33 @@ class EmergencyController extends \BaseController {
 		'alert_f' => 'Damkar'
 	);
 
+	protected $groupTotal = array(5, 4, 3, 2, 1);
+	
+	protected $groupName = array(
+		5 => 'Admin',
+		4 => 'Sipil', 
+		3 => 'Damkar', 
+		2 => 'Medis', 
+		1 => 'Polisi'
+	);
+
+	protected $status = array(
+		'' => 'Pilih Status',
+		0 => 'Palsu',
+		1 => 'Valid',
+		2 => 'Selesai'
+	);
+
 	// validator rules
 	protected $rulesType = array(
 		'type_name' => 'required|max:20'
+	);
+
+	protected $rulesCase = array(
+		'type' => 'required|integer',
+		'lat' => 'required|coordinate',
+		'lon' => 'required|coordinate',
+		'desc' => 'required'
 	);
 
 	public function getIndex()
@@ -47,7 +73,47 @@ class EmergencyController extends \BaseController {
 	 */
 	public function getIndexEmergency()
 	{
+		$query = EmergencyCase::with(array(
+			'em_type',
+			'user_reporter',
+			'user_validator',
+			'user_resolver'
+		));
 
+		// Ada query
+		if (Input::has('q')) {
+			$query->where('desc', 'LIKE', '%'. Input::get('q') .'%');
+		}
+
+		// Ada search by
+		if (Input::has('filter_by')) {
+			$query->where('type', Input::get('filter_by'));
+		}
+
+		// Ada urutan
+		if (Input::has('order_by')) {
+			$query->orderBy('desc', Input::get('order_by'));
+		}
+		
+		$em_cases = $query->paginate(5);
+
+		// Populate filterBy based on emergency type
+		$em_types = EmergencyType::all();
+
+		$this->filterBy[''] = 'Pilih Tipe';
+		foreach($em_types as $em_type) {
+			$this->filterBy[$em_type->type_id] = $em_type->type_name;
+		}
+
+		// return $em_cases;
+
+		return View::make('emergency.index_em', array(
+			'em_cases' => $em_cases,
+			'groupType' => $this->groupType,
+			'orderBy' => $this->orderBy,
+			'filterBy' => $this->filterBy,
+			'status' => $this->status
+		));
 	}
 
 	/**
@@ -56,8 +122,14 @@ class EmergencyController extends \BaseController {
 	 */
 	public function getCreateEmergency()
 	{
-		return View::make('emergency.create_type', array(
-			'groupType' => $this->groupType
+		// Generate Geo-JSON
+		$streets = RoadSmg::withGeoJson();
+
+		$em_types = $this->buildEmergencyType();
+
+		return View::make('emergency.create_em', array(
+			'em_types' => $em_types,
+			'streets' => $streets
 		));
 	}
 
@@ -67,7 +139,7 @@ class EmergencyController extends \BaseController {
 	 */
 	public function postCreateEmergency()
 	{
-		$rules = $this->rulesType;
+		$rules = $this->rulesCase;
 
 		$validator = Validator::make(Input::all(), $rules);
 
@@ -79,17 +151,27 @@ class EmergencyController extends \BaseController {
 		}
 		else
 		{
-			$em_type = new EmergencyType;
+			$em_case = new EmergencyCase;
 
-			$em_type->type_name = Input::get('type_name');
-			if (Input::has('alert_p')) $em_type->alert_p = Input::get('alert_p');
-			if (Input::has('alert_m')) $em_type->alert_m = Input::get('alert_m');
-			if (Input::has('alert_f')) $em_type->alert_f = Input::get('alert_f');
+			// get admin user
+			$user = DB::table('user')
+				->where('grup', 5)
+				->first();
 
-			$em_type->save();
+			$em_case->type = Input::get('type');
+			$em_case->lat = Input::get('lat');
+			$em_case->lon = Input::get('lon');
+			$em_case->time = DB::raw('NOW()');
+			$em_case->reporter = $user->no_id;
+			$em_case->validator = $user->no_id;
+			$em_case->resolver = $user->no_id;
+			$em_case->status = 1; // set to valid
+			$em_case->desc = Input::get('desc');
 
-			Session::flash('success_message', 'Tipe emergency <b>'. $em_type->type_name .'</b> berhasil disimpan');
-			return Redirect::action('EmergencyController@getIndexType');
+			$em_case->save();
+
+			Session::flash('success_message', 'Emergency dengan No ID <b>'. $em_case->case_id .'</b> berhasil disimpan');
+			return Redirect::action('EmergencyController@getIndexEmergency');
 		}
 	}
 
@@ -99,12 +181,38 @@ class EmergencyController extends \BaseController {
 	 */
 	public function getEditEmergency($id)
 	{
-		$em_type = EmergencyType::find($id);
+		$em_case = EmergencyCase::find($id);
 
-		return View::make('emergency.edit_type', array(
-			'em_type' => $em_type,
-			'groupType' => $this->groupType
-		));	
+		// Generate Geo-JSON
+		$streets = RoadSmg::withGeoJson();
+
+		$em_types = $this->buildEmergencyType();
+
+		// User
+		$users = DB::table('user')
+			->select('no_id', 'nama', 'grup')
+			->orderBy('grup', 'desc')
+			->get();		
+		$users_data = array();
+
+		// filter user by group type
+		foreach ($this->groupTotal as $key => $value) {
+			foreach ($users as $idx => $user) {
+				if ($value === $user->grup) {
+					$users_data[$value][] = $user;
+					unset($users[$idx]);
+				}
+			}
+		}
+
+		return View::make('emergency.edit_em', array(
+			'em_case' => $em_case,
+			'em_types' => $em_types,
+			'streets' => $streets,
+			'users_data' => $users_data,
+			'group_name' => $this->groupName,
+			'status' => $this->status
+		));
 	}
 
 	/**
@@ -113,7 +221,12 @@ class EmergencyController extends \BaseController {
 	 */
 	public function putEditEmergency($id)
 	{
-		$rules = $this->rulesType;
+		$rules = $this->rulesCase;
+
+		$rules['time'] = 'required|date_format:d-m-Y H:i:s';
+		$rules['reporter'] = 'required|exists:user,no_id';
+		$rules['validator'] = 'required|exists:user,no_id';
+		$rules['status'] = 'required|in:0,1,2';
 
 		$validator = Validator::make(Input::all(), $rules);
 
@@ -125,17 +238,21 @@ class EmergencyController extends \BaseController {
 		}
 		else
 		{
-			$em_type = EmergencyType::find($id);
+			$em_case = EmergencyCase::find($id);
 
-			$em_type->type_name = Input::get('type_name');
-			if (Input::has('alert_p')) $em_type->alert_p = Input::get('alert_p');
-			if (Input::has('alert_m')) $em_type->alert_m = Input::get('alert_m');
-			if (Input::has('alert_f')) $em_type->alert_f = Input::get('alert_f');
+			$em_case->type = Input::get('type');
+			$em_case->lat = Input::get('lat');
+			$em_case->lon = Input::get('lon');
+			$em_case->time = date("Y-m-d H:i:s", strtotime(Input::get('time')));
+			$em_case->reporter = Input::get('reporter');
+			$em_case->validator = Input::get('validator');
+			$em_case->status = Input::get('status');
+			$em_case->desc = Input::get('desc');
 
-			$em_type->save();
+			$em_case->save();
 
-			Session::flash('success_message', 'Tipe emergency <b>'. $em_type->type_name .'</b> berhasil diperbaharui');
-			return Redirect::action('EmergencyController@putIndexType');
+			Session::flash('success_message', 'Emergency dengan No ID <b>'. $em_case->case_id .'</b> berhasil diperbaharui');
+			return Redirect::action('EmergencyController@getIndexEmergency');
 		}
 	}
 
@@ -145,13 +262,13 @@ class EmergencyController extends \BaseController {
 	 */
 	public function deleteDestroyEmergency($id)
 	{
-		$em_type = EmergencyType::find($id);
+		$em_case = EmergencyCase::find($id);
 
-		$emTypeNama = $em_type->type_name;
+		$emCaseID = $em_case->case_id;
 
-		$em_type->delete();
+		$em_case->delete();
 
-		Session::flash('delete_message', 'User <b>'. $emTypeNama .'</b> berhasil dihapus');
+		Session::flash('delete_message', 'Emergency dengan No ID <b>'. $emCaseID .'</b> berhasil dihapus');
 		return Redirect::back();
 	}
 
@@ -295,7 +412,34 @@ class EmergencyController extends \BaseController {
 
 		$em_type->delete();
 
-		Session::flash('delete_message', 'User <b>'. $emTypeNama .'</b> berhasil dihapus');
+		Session::flash('delete_message', 'Tipe emergency <b>'. $emTypeNama .'</b> berhasil dihapus');
 		return Redirect::back();
+	}
+
+	/**
+	 * Tampilan indeks statistik
+	 * @return Response
+	 */
+	public function getIndexStatistic()
+	{
+
+	}
+
+	/**
+	 * Helper Tipe Emergency
+	 * @return array
+	 */
+	protected function buildEmergencyType()
+	{
+		$em_types = EmergencyType::all();
+		$em_types_data = array();
+
+		// Populate for select form
+		$em_types_data[''] = 'Pilih Tipe Emergency';
+		foreach($em_types as $em_type) {
+			$em_types_data[$em_type->type_id] = $em_type->type_name;
+		}
+
+		return $em_types_data;
 	}
 }

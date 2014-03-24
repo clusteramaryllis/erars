@@ -88,7 +88,7 @@
 		var marker = L.marker(markerPosition).addTo(map);
 
 		// draw the road
-		L.geoJson(streets,{
+		var roads = L.geoJson(streets,{
 			style: {
 				color: "orange",
 				weight: 3,
@@ -97,13 +97,16 @@
 		}).addTo(map);
 
 		// map onclick
-		map.on('click', function(e){
+		function mapClick(e){
 			// update marker
 			marker.setLatLng(e.latlng);
 			// populate form
 			$('#lat').val(e.latlng.lat);
-			$('#lng').val(e.latlng.lng);
-		});
+			$('#lon').val(e.latlng.lng);
+		}
+
+		map.on('click', mapClick);
+		roads.on('click', mapClick);
 	});
 	</script>
 @stop

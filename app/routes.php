@@ -32,6 +32,13 @@ Route::group(array( 'before' => 'auth' ), function()
 	// Emergency
 	Route::get('cpanel/emergency', 'EmergencyController@getIndex');
 
+	Route::get('cpanel/emergency/case', 'EmergencyController@getIndexEmergency');
+	Route::get('cpanel/emergency/case/create', 'EmergencyController@getCreateEmergency');
+	Route::post('cpanel/emergency/case/create', 'EmergencyController@postCreateEmergency');
+	Route::get('cpanel/emergency/case/{id}/edit', 'EmergencyController@getEditEmergency');
+	Route::put('cpanel/emergency/case/{id}/edit', 'EmergencyController@putEditEmergency');
+	Route::delete('cpanel/emergency/case/{id}/destroy', 'EmergencyController@deleteDestroyEmergency');
+
 	Route::get('cpanel/emergency/type', 'EmergencyController@getIndexType');
 	Route::get('cpanel/emergency/type/create', 'EmergencyController@getCreateType');
 	Route::post('cpanel/emergency/type/create', 'EmergencyController@postCreateType');
@@ -66,4 +73,15 @@ Route::group(array( 'before' => 'auth' ), function()
 
 	// Logout
 	Route::any('logout', 'AdminController@requestLogout');
+});
+
+
+Route::get('coba', function()
+{
+	return DB::table('em_case')
+		->select(DB::raw('to_char(em_case.time, \'YYYY-MM-DD\') AS date'), 'em_case.type', 'em_type.type_name', DB::raw('COUNT(em_case.case_id)'))
+		->join('em_type', 'em_case.type', '=', 'em_type.type_id')
+		->groupBy('date', 'em_case.type', 'em_type.type_name')
+		->orderBy('date', 'desc')
+		->get();
 });
