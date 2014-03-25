@@ -1,5 +1,11 @@
 ## Installasi
 
+Untuk development versi PHP minimum (5.4 Recommended)
+
+- Composer => PHP 5.3.2
+- Laravel => PHP 5.3.7
+- Artisan => PHP 5.4
+
 Download & install [Composer](https://getcomposer.org/download/)
 
 Download project & extract di `namafolder` yang Anda inginkan
