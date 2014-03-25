@@ -45,6 +45,9 @@ Route::group(array( 'before' => 'auth' ), function()
 	Route::get('cpanel/emergency/type/{id}/edit', 'EmergencyController@getEditType');
 	Route::put('cpanel/emergency/type/{id}/edit', 'EmergencyController@putEditType');
 	Route::delete('cpanel/emergency/type/{id}/destroy', 'EmergencyController@deleteDestroyType');
+
+	Route::get('cpanel/emergency/statistic', 'EmergencyController@getIndexStatistic');
+	Route::get('cpanel/emergency/statistic/chart', 'EmergencyController@getChartStatistic');
 	
 	// Fasilitas
 	Route::get('cpanel/facility', 'FacilityController@getIndex');
@@ -76,7 +79,7 @@ Route::group(array( 'before' => 'auth' ), function()
 });
 
 
-Route::get('coba', function()
+/*Route::get('coba', function()
 {
 	return DB::table('em_case')
 		->select(DB::raw('to_char(em_case.time, \'YYYY-MM-DD\') AS date'), 'em_case.type', 'em_type.type_name', DB::raw('COUNT(em_case.case_id)'))
@@ -84,4 +87,4 @@ Route::get('coba', function()
 		->groupBy('date', 'em_case.type', 'em_type.type_name')
 		->orderBy('date', 'desc')
 		->get();
-});
+});*/

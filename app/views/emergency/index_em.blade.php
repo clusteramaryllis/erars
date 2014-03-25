@@ -110,10 +110,7 @@
 				</div>
 
 				<div class="form-group">
-					{{ Form::label('g', 'Filter Berdasarkan') }}
-					{{ Form::label('filter_by', 'Pilih Tipe', array(
-						'class' => 'sr-only'
-					)) }}
+					{{ Form::label('filter_by', 'Filter Berdasarkan') }}
 					{{ Form::select('filter_by', $filterBy, Input::has('filter_by') ? Input::get('filter_by') : '', array(
 						'class' => 'form-control'
 					)) }}

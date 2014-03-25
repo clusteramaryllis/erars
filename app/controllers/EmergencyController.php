@@ -60,7 +60,7 @@ class EmergencyController extends \BaseController {
 
 	public function getIndex()
 	{
-
+		return View::make('emergency.index');
 	}
 
 	// =============================================================================================
@@ -98,18 +98,12 @@ class EmergencyController extends \BaseController {
 		$em_cases = $query->paginate(5);
 
 		// Populate filterBy based on emergency type
-		$em_types = EmergencyType::all();
-
-		$this->filterBy[''] = 'Pilih Tipe';
-		foreach($em_types as $em_type) {
-			$this->filterBy[$em_type->type_id] = $em_type->type_name;
-		}
+		$this->filterBy = $this->buildEmergencyType();
 
 		// return $em_cases;
 
 		return View::make('emergency.index_em', array(
 			'em_cases' => $em_cases,
-			'groupType' => $this->groupType,
 			'orderBy' => $this->orderBy,
 			'filterBy' => $this->filterBy,
 			'status' => $this->status
@@ -223,6 +217,7 @@ class EmergencyController extends \BaseController {
 	{
 		$rules = $this->rulesCase;
 
+		// add edit rules
 		$rules['time'] = 'required|date_format:d-m-Y H:i:s';
 		$rules['reporter'] = 'required|exists:user,no_id';
 		$rules['validator'] = 'required|exists:user,no_id';
@@ -416,13 +411,84 @@ class EmergencyController extends \BaseController {
 		return Redirect::back();
 	}
 
+	// =============================================================================================
+	// | Statistik                                                                                 |
+	// =============================================================================================
+	
 	/**
 	 * Tampilan indeks statistik
 	 * @return Response
 	 */
 	public function getIndexStatistic()
 	{
+		$query = DB::table('em_case')
+			->select(DB::raw('to_char(em_case.time, \'YYYY-MM-DD\') AS date, COUNT(em_case.case_id) AS count'));
 
+		// Ada filter by
+		if (Input::has('filter_by')) {
+			$query->where('em_case.type', Input::get('filter_by'));
+		}
+
+		// Ada interval
+		if (Input::has('from')) {
+			$query->where( 'em_case.time', '>=', date("Y-m-d", strtotime(Input::get('from'))) . ' 00:00:00');
+		}
+
+		if (Input::has('to')) {
+			$query->where( 'em_case.time', '<=', date("Y-m-d", strtotime(Input::get('to'))) . ' 23:59:59');
+		}
+
+		$query->groupBy('date')
+			->orderBy('date', 'desc');
+		
+		$em_cases = $query->paginate(5);		
+
+		// Populate filterBy based on emergency type
+		$this->filterBy = $this->buildEmergencyType();
+
+		return View::make('emergency.index_stats', array(
+			'em_cases' => $em_cases,
+			'groupType' => $this->groupType,
+			'filterBy' => $this->filterBy
+		));
+	}
+
+	/**
+	 * Tampilan charts statistik
+	 * @return Response
+	 */
+	public function getChartStatistic()
+	{
+		$query = DB::table('em_case')
+			->select(DB::raw('to_char(em_case.time, \'YYYY-MM-DD\') AS date, COUNT(em_case.case_id) AS count'));
+
+		// Ada filter by
+		if (Input::has('filter_by')) {
+			$query->where('em_case.type', Input::get('filter_by'));
+		}
+
+		// Ada interval
+		if (Input::has('from')) {
+			$query->where( 'em_case.time', '>=', date("Y-m-d", strtotime(Input::get('from'))) . ' 00:00:00');
+		}
+
+		if (Input::has('to')) {
+			$query->where( 'em_case.time', '<=', date("Y-m-d", strtotime(Input::get('to'))) . ' 23:59:59');
+		}
+
+		$query->groupBy('date')
+			->orderBy('date', 'desc');
+		
+		$em_cases = $query->get();
+
+		// Populate filterBy based on emergency type
+		$this->filterBy = $this->buildEmergencyType();
+
+		return View::make('emergency.chart_stats', array(
+			'em_cases' => $em_cases,
+			'groupType' => $this->groupType,
+			'filterBy' => $this->filterBy
+		));	
 	}
 
 	/**
