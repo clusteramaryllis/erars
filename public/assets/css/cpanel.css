@@ -1,9 +1,21 @@
-/*body {
-	background-image: url('../img/blur.jpg');
+body {
+	background: url('../img/stripe-background.png');
 }
-#content {
+table {
 	background-color: #fff;
-}*/
+}
+hr {
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #fff;
+}
+
+.footer {
+	background-color: #fff;
+	min-height: 0;
+}
+.footer .navbar-text {
+	margin: 5px 0;
+}
 
 .form-inline-wide .form-group {
 	margin-right: 15px;
@@ -23,7 +35,14 @@
 }
 
 .icon-panel:hover {
-	background: #aaa;	
+	background: #aaa;
+	background: -moz-radial-gradient(center, ellipse cover,  #eeeeee 0%, #aaaaaa 100%);
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#eeeeee), color-stop(100%,#aaaaaa));
+	background: -webkit-radial-gradient(center, ellipse cover,  #eeeeee 0%,#aaaaaa 100%);
+	background: -o-radial-gradient(center, ellipse cover,  #eeeeee 0%,#aaaaaa 100%);
+	background: -ms-radial-gradient(center, ellipse cover,  #eeeeee 0%,#aaaaaa 100%);
+	background: radial-gradient(ellipse at center,  #eeeeee 0%,#aaaaaa 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#aaaaaa',GradientType=1 );
 }
 
 .icon-panel i {

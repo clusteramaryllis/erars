@@ -1,6 +1,6 @@
 @extends('layouts.cpanel')
-@section('title','Indeks Statistik Emergency')
-@section('body_class','cpanel index-em-stats')
+@section('title','Chart Statistik Emergency')
+@section('body_class','cpanel chart-em-stats')
 
 @section('bottom_css')
 	@parent
