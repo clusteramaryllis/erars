@@ -492,6 +492,38 @@ class EmergencyController extends \BaseController {
 	}
 
 	/**
+	 * Request Ajax untuk Real Time
+	 * @return Response
+	 */
+	public function postAjaxLatestEmergency()
+	{
+		// no parameter, return error
+		if (!Input::has('case_id')) {
+			return Response::error('404');
+		}
+
+		$case_id = (int) Input::get('case_id');
+
+		while(true) {
+
+			$case = EmergencyCase::with(array(
+				'em_type',
+				'user_reporter',
+				'user_validator',
+				'user_resolver'
+			))->orderBy('case_id', 'desc')
+				->first();
+
+			if ($case && $case->case_id !== $case_id) {
+				return $case;
+			}
+
+			// delay 5 seconds
+			sleep(5);
+		}
+	}
+
+	/**
 	 * Helper Tipe Emergency
 	 * @return array
 	 */

@@ -28,7 +28,8 @@ Route::group(array( 'before' => 'guest' ), function()
 Route::group(array( 'before' => 'auth' ), function()
 {
 	// Cpanel
-	
+	Route::get('cpanel', 'HomeController@getIndex');
+
 	// Emergency
 	Route::get('cpanel/emergency', 'EmergencyController@getIndex');
 
@@ -48,6 +49,9 @@ Route::group(array( 'before' => 'auth' ), function()
 
 	Route::get('cpanel/emergency/statistic', 'EmergencyController@getIndexStatistic');
 	Route::get('cpanel/emergency/statistic/chart', 'EmergencyController@getChartStatistic');
+
+	// Ajax Request
+	Route::post('cpanel/emergency/ajax/latest', array( 'before' => 'ajax', 'uses' => 'EmergencyController@postAjaxLatestEmergency'));
 	
 	// Fasilitas
 	Route::get('cpanel/facility', 'FacilityController@getIndex');

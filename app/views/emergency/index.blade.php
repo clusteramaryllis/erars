@@ -28,7 +28,7 @@
   <div class="row">
   	<div class="col-md-12 clearfix">
 	    <div class="btn-group">
-	      <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
+	      <a href="{{ action('HomeController@getIndex') }}" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
 	      <a href="#" class="btn btn-primary active">Emergency</a>
 	    </div>
 	    <hr>

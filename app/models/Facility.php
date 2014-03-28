@@ -15,4 +15,11 @@ class Facility extends Eloquent {
 			->where('gid', $id)
 			->first();
 	}
+
+	public function scopeAllWithGeomToLatLng($query)
+	{
+		return $query
+			->select(DB::raw('gid, nama, type, alamat, telp, ST_Y(the_geom) as lat, ST_X(the_geom) as lng'))
+			->get();
+	}
 }

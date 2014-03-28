@@ -93,7 +93,7 @@
   <div class="row">
   	<div class="col-md-12 clearfix">
 	    <div class="btn-group">
-	      <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
+	      <a href="{{ action('HomeController@getIndex') }}" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
 	      <a href="{{ action('EmergencyController@getIndex') }}" class="btn btn-default">Emergency</a>
 	      <a href="#" class="btn btn-primary active">Statistik</a>
 	    </div>

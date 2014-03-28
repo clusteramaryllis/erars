@@ -119,7 +119,7 @@
   <div class="row">
   	<div class="col-md-12">
 	    <div class="btn-group">
-	      <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
+	      <a href="{{ action('HomeController@getIndex') }}" class="btn btn-default"><i class="glyphicon glyphicon-home"></i></a>
 	      <a href="{{ action('FacilityController@getIndex') }}" class="btn btn-default">Fasilitas</a>
 	      <a href="#" class="btn btn-primary active">Edit</a>
 	    </div>
