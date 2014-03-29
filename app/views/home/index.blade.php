@@ -201,6 +201,10 @@
 	    	</div>
 	    </div>
 
+	    <div>
+	    	<p class="bg-default" style="padding: 2px 10px; border-bottom: 1px solid #ccc; text-align: center; font-weight: bold">Hari ini</p>
+	    </div>
+
 	    <div class="well">
 	    	<p class="text-danger">Emergency: {{ $em_count->count }}</p>
 	    	<p class="text-success">Selesai: {{ $em_success->count }}</p>
