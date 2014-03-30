@@ -75,7 +75,7 @@ Buka dengan text editor (seperti Notepad dkk.) file `C:\Windows\System32\Drivers
 
 Tambahkan kode berikut di bagian akhir file tersebut
 
-127.0.0.1 erars.io
+`127.0.0.1 erars.io`
 
 Catatan :
 `erars.io` bisa diganti dengan nama domain pada saat setting yang dipakai di virtual host
@@ -85,6 +85,7 @@ Save.
 !!! Rekomendasi !!!
 
 Matikan Antivirus terlebih dahulu (Biasanya diblok).
+
 Jalankan notepad sebagai `Run as Administrator`. dan open `C:\Windows\System32\Drivers\etc\hosts` dari notepad.
 
 ##### 3. Restart Apache
