@@ -294,6 +294,8 @@ class EmergencyController extends \BaseController {
 		// Ada urutan
 		if (Input::has('order_by')) {
 			$query->orderBy($orderName, Input::get('order_by'));
+		} else {
+			$query->orderBy('type_id', 'asc');
 		}
 		
 		$em_types = $query->paginate(5);
