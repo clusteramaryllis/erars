@@ -71,7 +71,7 @@ class UserController extends \BaseController {
 
 		// Ada query
 		if (Input::has('q')) {
-			$query->where('nama', 'LIKE', '%'. Input::get('q') .'%');
+			$query->where(DB::raw('LOWER(nama)'), 'LIKE', DB::raw('LOWER(\'%'. Input::get('q') .'%\')'));
 		}
 
 		// Ada urutan
@@ -242,7 +242,8 @@ class UserController extends \BaseController {
 
 		// Ada query
 		if (Input::has('q')) {
-			$query->where('nama', 'LIKE', '%'. Input::get('q') .'%');
+			// $query->where('nama', 'LIKE', '%'. Input::get('q') .'%');
+			$query->where(DB::raw('LOWER(nama)'), 'LIKE', DB::raw('LOWER(\'%'. Input::get('q') .'%\')'));
 		}
 
 		// Ada grup

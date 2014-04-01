@@ -82,7 +82,7 @@ class EmergencyController extends \BaseController {
 
 		// Ada query
 		if (Input::has('q')) {
-			$query->where('desc', 'LIKE', '%'. Input::get('q') .'%');
+			$query->where(DB::raw('LOWER(em_case.desc)'), 'LIKE', DB::raw('LOWER(\'%'. Input::get('q') .'%\')'));
 		}
 
 		// Ada search by
@@ -282,7 +282,7 @@ class EmergencyController extends \BaseController {
 
 		// Ada query
 		if (Input::has('q')) {
-			$query->where('type_name', 'LIKE', '%'. Input::get('q') .'%');
+			$query->where(DB::raw('LOWER(em_type.type_name)'), 'LIKE', DB::raw('LOWER(\'%'. Input::get('q') .'%\')'));
 		}
 
 		// Ada search by

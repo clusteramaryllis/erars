@@ -36,7 +36,7 @@ class FacilityController extends \BaseController {
 
 		// Ada query
 		if (Input::has('q')) {
-			$query->where('nama', 'LIKE', '%'. Input::get('q') .'%');
+			$query->where(DB::raw('LOWER(em_facility.nama)'), 'LIKE', DB::raw('LOWER(\'%'. Input::get('q') .'%\')'));
 		}
 
 		// Ada grup
