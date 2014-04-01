@@ -102,7 +102,7 @@
 			marker.setLatLng(e.latlng);
 			// populate form
 			$('#lat').val(e.latlng.lat);
-			$('#lon').val(e.latlng.lng);
+			$('#lng').val(e.latlng.lng);
 		}
 
 		map.on('click', mapClick);
