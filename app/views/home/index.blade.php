@@ -116,7 +116,7 @@
 		foreach ($emergencies as $emergency) {
 			$script .= 'var marker_e' . $emergency->case_id . ' = ';
 			$script .= 'L.marker([' . $emergency->lat . ', ' . $emergency->lon . '], {icon: icon_E})';
-			$script .= '.bindPopup("<b>Deskripsi : ' . $emergency->desc . '</b><br>Tipe : ' . $emergency->em_type->type_name .'<br>Pelapor : ' . $emergency->user_reporter->no_id . ' - ' . $emergency->user_reporter->nama . '<br>Validator : ' . $emergency->user_validator->no_id . ' - ' . $emergency->user_validator->nama . '<br>Resolver : ' . $emergency->user_resolver->no_id . ' - ' . $emergency->user_resolver->nama . '<br>Koordinat : (' . $emergency->lat . ', ' . $emergency->lon . ')", {"offset": L.point(0,-20)})';
+			$script .= '.bindPopup("<b>Deskripsi : ' . $emergency->desc . '</b><br>Tipe : ' . $emergency->em_type->type_name .'<br>Pelapor : ' . $emergency->user_reporter->no_id . ' - ' . $emergency->user_reporter->nama . '<br>Validator : ' . $emergency->user_validator->no_id . ' - ' . $emergency->user_validator->nama . ($emergency->user_resolver ? '<br>Resolver : ' . $emergency->user_resolver->no_id . ' - ' . $emergency->user_resolver->nama : '') . '<br>Koordinat : (' . $emergency->lat . ', ' . $emergency->lon . ')", {"offset": L.point(0,-20)})';
 			$script .= '.addTo(map);';
 
 			$script .= 'marker_e' . $emergency->case_id . '.on("mouseover", function(e){ this.openPopup(); })';

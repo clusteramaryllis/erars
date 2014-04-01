@@ -16,7 +16,8 @@
 	<script>
 	jQuery(function($){
 		$('#datetimepicker').datetimepicker({
-			pickTime: false
+			pickTime: false,
+			maxDate: new Date('{{ $maxDate }}')
 		});
 
 		$('.has-tooltip').on('keypress', function(){

@@ -95,7 +95,14 @@ class UserController extends \BaseController {
 	 */
 	public function getCreateUser()
 	{
-		return View::make('user.create_user', array('gender' => $this->gender));
+		$maxDate = date('m/d/Y', strtotime("-17 years"));
+
+		return View::make('user.create_user', 
+			array(
+				'gender' => $this->gender,
+				'maxDate' => $maxDate
+			)
+		);
 	}
 
 	/**
@@ -146,10 +153,12 @@ class UserController extends \BaseController {
 	public function getEditUser($id)
 	{
 		$user = User::find($id);
+		$maxDate = date('m/d/Y', strtotime("-17 years"));
 
 		return View::make('user.edit_user', array(
 			'gender' => $this->gender,
-			'user' => $user
+			'user' => $user,
+			'maxDate' => $maxDate
 		));
 	}
 
@@ -267,11 +276,13 @@ class UserController extends \BaseController {
 		unset($this->group[4]);
 
 		$facilities = Facility::all();
+		$maxDate = date('m/d/Y', strtotime("-17 years"));
 
 		return View::make('user.create_ert', array(
 			'gender' => $this->gender,
 			'group' => $this->group,
-			'facilities' => $facilities
+			'facilities' => $facilities,
+			'maxDate' => $maxDate
 		));
 	}
 
@@ -339,7 +350,8 @@ class UserController extends \BaseController {
 			'gender' => $this->gender,
 			'group' => $this->group,
 			'user' => $user,
-			'facilities' => $facilities
+			'facilities' => $facilities,
+			'maxDate' => $maxDate
 		));
 	}
 
