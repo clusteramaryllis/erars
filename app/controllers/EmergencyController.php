@@ -92,7 +92,9 @@ class EmergencyController extends \BaseController {
 
 		// Ada urutan
 		if (Input::has('order_by')) {
-			$query->orderBy('desc', Input::get('order_by'));
+			$query->orderBy('time', Input::get('order_by'));
+		} else {
+			$query->orderBy('time', 'desc');
 		}
 		
 		$em_cases = $query->paginate(5);
@@ -158,7 +160,6 @@ class EmergencyController extends \BaseController {
 			$em_case->time = DB::raw('NOW()');
 			$em_case->reporter = $user->no_id;
 			$em_case->validator = $user->no_id;
-			$em_case->resolver = $user->no_id;
 			$em_case->status = 1; // set to valid
 			$em_case->desc = Input::get('desc');
 

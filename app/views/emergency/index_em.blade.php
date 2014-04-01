@@ -185,9 +185,13 @@
 							<td class="{{ $opt_color[$em_case->user_validator->grup] }}">
 								{{ $em_case->user_validator->no_id }} - {{ $em_case->user_validator->nama }}
 							</td>
+							@if ($em_case->user_resolver)
 							<td class="{{ $opt_color[$em_case->user_resolver->grup] }}">
 								{{ $em_case->user_resolver->no_id }} - {{ $em_case->user_resolver->nama }}
 							</td>
+							@else
+							<td><i>Kosong</i></td>
+							@endif
 							<td>
 								<span class="{{ $status_color[$em_case->status] }}">{{ $status[$em_case->status] }}</span>
 							</td>
