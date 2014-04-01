@@ -37,7 +37,7 @@ class HomeController extends \BaseController {
 			'user_reporter',
 			'user_validator',
 			'user_resolver'
-		))->where('status', '!=', '2')
+		))->where('status', '=', '1')
 			->get();
 
 		return View::make('home.index', array(
