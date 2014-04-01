@@ -77,6 +77,8 @@ class UserController extends \BaseController {
 		// Ada urutan
 		if (Input::has('order_by')) {
 			$query->orderBy('nama', Input::get('order_by'));
+		} else {
+			$query->orderBy('nama', 'asc');
 		}
 		
 		$users = $query->paginate(5);
@@ -237,6 +239,8 @@ class UserController extends \BaseController {
 		// Ada grup
 		if (Input::has('group_by')) {
 			$query->where('grup', Input::get('group_by'));
+		} else {
+			$query->orderBy('nama', 'asc');
 		}
 
 		// Ada urutan
