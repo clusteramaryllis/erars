@@ -562,14 +562,8 @@ class Genetic {
 				$this->items['dest_lat'],
 				$this->items['dest_lng']
 			),
-			'src_dir' => $this->getDirection(
-				reset($path), 
-				next($path)
-			),
-			'dest_dir' => $this->getDirection(
-				end($path),
-				prev($path)
-			)
+			'src_dir' => $this->getDirection($firstPath, $afterFirstPath),
+			'dest_dir' => $this->getDirection($lastPath, $beforeLastPath)
 		);
 
 		return $data;
