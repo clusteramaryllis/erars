@@ -29,6 +29,11 @@ Route::group(array( 'before' => 'auth' ), function()
 {
 	// Cpanel
 	Route::get('cpanel', 'HomeController@getIndex');
+	Route::get('cpanel/simulation', 'HomeController@getSimulation');
+
+	// Ajax Request
+	Route::post('cpanel/routing', array( 'before' => 'ajax', 'uses' => 'HomeController@postAjaxRouting'));
+	Route::post('cpanel/simulation/routing', array( 'before' => 'ajax', 'uses' => 'HomeController@postAjaxSimulation'));
 
 	// Emergency
 	Route::get('cpanel/emergency', 'EmergencyController@getIndex');
@@ -83,6 +88,81 @@ Route::group(array( 'before' => 'auth' ), function()
 });
 
 
+Route::get('distance', function(){
+
+	set_time_limit(0);
+
+	$time = microtime(true);
+
+	$src_lat = -6.97956178926843;
+	$src_lng = 110.401043020797;
+	$dest_lat = -6.97277569339086;
+	$dest_lng = 110.426216121996;
+
+	$road = new Genetic(
+		$src_lat,
+		$src_lng,
+		$dest_lat,
+		$dest_lng
+	);
+
+	print_r($road->findBestPath());
+	// return Response::json($road->getPopulation());
+	
+	/*echo '<table class="table">';
+	echo '<thead>';
+	echo '<tr><td>No</td><td>Jalur</td><td>Jarak Tempuh</td></tr>';
+	echo '</thead>';
+	echo '<tbody>';
+	$pop = $road->getPopulation();
+	foreach ($pop as $key => $value) {
+		echo '<tr><td>'. ($key+1) .'</td><td>'. implode(" > ", $value['path']) .'</td><td>'. $value['cost'] .'</td></tr>';
+	}
+	echo '</tbody>';
+	echo '</table>';
+	echo '<br>';
+
+	$offspring = $road->getOffspring();
+	foreach ($offspring as $key => $value) {
+		echo 'Generasi ke - '. ($key+1) . '<br>';
+		echo '<table class="table">';
+		echo '<thead>';
+		echo '<tr><td>No</td><td>Jalur</td><td>Jarak Tempuh</td></tr>';
+		echo '</thead>';
+		echo '<tbody>';
+		foreach ($offspring[$key] as $key2 => $value2) {
+			echo '<tr><td>'. ($key2+1) .'</td><td>'. implode(" > ", $value2['path']) .'</td><td>'. $value2['cost'] .'</td></tr>';
+		}
+		echo '</tbody>';
+		echo '</table>';
+		echo '<br>';
+	}
+	
+	echo 'Time running : '. (microtime(true) - $time) .'s';*/
+
+	/*$pointer = 1;
+	$startPos = 43;
+	$endPos = 75;
+
+	return DB::table('roads_smg')
+						->where('gid', '!=', $pointer)
+						->where(function($query) use($startPos, $endPos){
+							$query->where('source', $startPos)
+								->orWhere('target', $startPos)
+								->orWhere('source', $endPos)
+								->orWhere('target', $endPos);
+						})
+						->where(function($query) use($startPos, $endPos){
+							$query->whereRaw('NOT(dir = \'FT\' AND (target = ' . $startPos . ' OR target = ' . $endPos . '))')
+								->whereRaw('NOT(dir = \'TF\' AND (source = ' . $startPos . ' OR source = ' . $endPos . '))');
+						})
+						->orderBy(DB::raw('RANDOM()'))
+						->toSql();*/
+	// return RoadSmg::NearestPoint(1, 6, 10);
+	// return RoadSmg::CostBetweenPoint(6, 110, 7, 105);
+	// return RoadSmg::NearestCostPointToLine(1, 6, 110, 1);
+	// return RoadSmg::NearestEdge(6, 110);
+});
 /*Route::get('coba', function()
 {
 	return DB::table('em_case')

@@ -116,8 +116,7 @@ class FacilityController extends \BaseController {
 		$streets = RoadSmg::withGeoJson();
 
 		// Converts geometry to latitude or longitude
-		$facility = Facility::findWithGeomToLatLng($id);
-			
+		$facility = Facility::findWithGeomToLatLng($id);	
 
 		return View::make('facility.edit', array(
 			'type' => $this->group,

@@ -16,6 +16,9 @@
 				<li class="{{ URL::getRequest()->is('cpanel') ? 'active' : '' }}">
 					<a href="{{ action('HomeController@getIndex') }}"><i class="fa fa-home"></i> Home</a>
 				</li>
+				<li class="{{ URL::getRequest()->is('cpanel/simulation') ? 'active' : '' }}">
+					<a href="{{ action('HomeController@getSimulation') }}"><i class="fa fa-laptop"></i> Simulasi</a>
+				</li>
 				<li class="dropdown {{ URL::getRequest()->is('cpanel/emergency*') ? ' active' : '' }}">
 					<a href="{{ action('EmergencyController@getIndex') }}" class="dropdown-toggle" data-toggle="dropdown">
 						<i class="fa fa-ambulance"></i> Emergency <b class="caret"></b>

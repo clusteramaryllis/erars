@@ -74,6 +74,29 @@ hr {
 	background-color: #eee;
 }
 
+#map-context-menu,
+#fa-context-menu,
+#em-context-menu {
+  display: none;
+  position: absolute;
+}
+
+.list-context-menu {
+  display: block;
+  position: static;
+  margin-bottom: 5px;
+}
+
+#road-list ul {
+  padding-left: 15px;
+  margin-bottom: 0;
+}
+
+#panel-road {
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
 /*
     Component: Small boxes
     taken and modified from http://almsaeedstudio.com/AdminLTE/
