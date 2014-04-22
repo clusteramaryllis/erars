@@ -87,10 +87,20 @@ Route::group(array( 'before' => 'auth' ), function()
 	Route::any('logout', 'AdminController@requestLogout');
 });
 
+// XML
+Route::get('mobile/login/{id}/{pass}', 'MobileController@getLogin');
+Route::get('mobile/user/register/{id}/{nama}/{tmp_lahir}/{tgl}/{bln}/{thn}/{gender}/{alamat}/{kerja}/{telp}/{email}', 'MobileController@postUserRegister');
+Route::get('mobile/user/update/{id}/{nama}/{tmp_lahir}/{tgl}/{bln}/{thn}/{gender}/{alamat}/{kerja}/{telp}/{email}', 'MobileController@putUserUpdate');
+Route::get('mobile/emergency/send/{id}/{type}/{lng}/{lat}/{desc}', 'MobileController@postEmergencySend');
+Route::get('mobile/emergency/validate/{user_id}/{em_id}', 'MobileController@putEmergencyValidate');
+Route::get('mobile/emergency/resolve/{user_id}/{em_id}', 'MobileController@putEmergencyResolve');
+Route::get('mobile/roads', 'MobileController@getRoads');
+Route::get('mobile/routes/{src_lng}/{src_lat}/{dest_lng}/{dest_lat}', 'MobileController@getRoutes');
+
 
 Route::get('distance', function(){
 
-	set_time_limit(0);
+	/*set_time_limit(0);
 
 	$time = microtime(true);
 
@@ -106,7 +116,7 @@ Route::get('distance', function(){
 		$dest_lng
 	);
 
-	print_r($road->findBestPath());
+	print_r($road->findBestPath());*/
 	// return Response::json($road->getPopulation());
 	
 	/*echo '<table class="table">';

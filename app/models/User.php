@@ -16,4 +16,12 @@ class User extends Eloquent {
 	{
 		return $this->belongsTo('Facility', 'tmp_dinas');
 	}
+
+	public function scopeFindByIdPass($query, $id, $pass)
+	{
+		return $query
+			->where('no_id', $id)
+			->where('pass', $pass)
+			->first();
+	}
 }
