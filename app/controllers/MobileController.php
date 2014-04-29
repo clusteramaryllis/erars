@@ -194,9 +194,10 @@ class MobileController extends \BaseController {
 	 */
 	public function putEmergencyValidate($user_id, $em_id)
 	{
+		$user = User::find($user_id);
 		$em_case = EmergencyCase::find($em_id);
 
-		if ($em_case)
+		if ($user && $em_case)
 		{
 			$em_case->validator = $user_id;
 
@@ -227,9 +228,10 @@ class MobileController extends \BaseController {
 	 */
 	public function putEmergencyResolve($user_id, $em_id)
 	{
+		$user = User::find($user_id);
 		$em_case = EmergencyCase::find($em_id);
 
-		if ($em_case)
+		if ($user && $em_case)
 		{
 			$em_case->resolver = $user_id;
 
