@@ -454,18 +454,22 @@ class UserController extends \BaseController {
 		foreach ($em_cases_reporter as $em_case_reporter) 
 		{
 			$em_case_reporter->reporter = '0000000000000000';
+			$em_case_reporter->save();
 		}
 
 		$em_cases_validator = EmergencyCase::where('validator', $id);
 		foreach ($em_cases_validator as $em_case_validator) 
 		{
 			$em_case_validator->validator = '0000000000000000';
+			$em_case_validator->save();
+
 		}
 
 		$em_cases_resolver = EmergencyCase::where('resolver', $id);
 		foreach ($em_cases_resolver as $em_case_resolver) 
 		{
 			$em_case_resolver->resolver = '0000000000000000';
+			$em_case_resolver->save();
 		}
 	}
 
