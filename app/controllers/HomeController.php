@@ -119,24 +119,41 @@ class HomeController extends \BaseController {
 		));
 		$result[] = $obj;
 
-		// intersection between road from starting point
-		$src_part = 1 - $data['bestpath']['src_part'];
-		$result[] = ($data['bestpath']['src_dir'] === 0) ?
-			RoadSmg::GeoJsonNearestPoint($firstPath, 0, $data['bestpath']['src_part']) :
-			RoadSmg::GeoJsonNearestPoint($firstPath, $src_part, 1);
-		
-		// routing roads
-		foreach ($data['bestpath']['path'] as $value) 
+		if(count($data['bestpath']['path']) == 0 && $firstPath == $lastPath)
 		{
-			$result[] = RoadSmg::findWithGeoJson($value);
+			if($data['bestpath']['src_part'] > $data['bestpath']['dest_part'])
+			{
+				$start = $data['bestpath']['dest_part']; 
+				$end   = $data['bestpath']['src_part'];
+			}
+			else
+			{
+				$end   = $data['bestpath']['dest_part']; 
+				$start = $data['bestpath']['src_part'];
+			}
+			$result[] = RoadSmg::GeoJsonNearestPoint($firstPath,$start,$end);
 		}
+		else
+		{
+			// intersection between road from starting point
+			$src_part = $data['bestpath']['src_part'];
+			$result[] = ($data['bestpath']['src_dir'] === 0) ?
+				RoadSmg::GeoJsonNearestPoint($firstPath, 0, $src_part) :
+				RoadSmg::GeoJsonNearestPoint($firstPath, $src_part, 1);
+		
+			// routing roads
+			foreach ($data['bestpath']['path'] as $value) 
+			{
+				$result[] = RoadSmg::findWithGeoJson($value);
+			}
 
-		// intersection between road from end point
-		// $dest_part = 1 - $data['bestpath']['dest_part'];
-		$result[] = ($data['bestpath']['dest_dir'] === 0) ?
-			RoadSmg::GeoJsonNearestPoint($lastPath, 0, $data['bestpath']['dest_part']) :
-			RoadSmg::GeoJsonNearestPoint($lastPath, $data['bestpath']['dest_part'], 1);
-
+			// intersection between road from end point
+			// $dest_part = 1 - $data['bestpath']['dest_part'];
+			$result[] = ($data['bestpath']['dest_dir'] === 0) ?
+				RoadSmg::GeoJsonNearestPoint($lastPath, 0, $data['bestpath']['dest_part']) :
+				RoadSmg::GeoJsonNearestPoint($lastPath, $data['bestpath']['dest_part'], 1);
+		}
+		
 		// end point distance to roads
 		$obj = new \StdClass;
 		$obj->gid = '-2';
@@ -207,24 +224,40 @@ class HomeController extends \BaseController {
 		));
 		$result[] = $obj;
 
-		// intersection between road from starting point
-		$src_part = 1 - $data['bestpath']['src_part'];
-		$result[] = ($data['bestpath']['src_dir'] === 0) ?
-			RoadSmg::GeoJsonNearestPoint($firstPath, 0, $data['bestpath']['src_part'])->toArray() :
-			RoadSmg::GeoJsonNearestPoint($firstPath, $src_part, 1)->toArray();
-		
-		// routing roads
-		foreach ($data['bestpath']['path'] as $value) 
+		if(count($data['bestpath']['path']) == 0 && $firstPath == $lastPath)
 		{
-			$result[] = RoadSmg::findWithGeoJson($value)->toArray();
+			if($data['bestpath']['src_part'] > $data['bestpath']['dest_part'])
+			{
+				$start = $data['bestpath']['dest_part']; 
+				$end   = $data['bestpath']['src_part'];
+			}
+			else
+			{
+				$end   = $data['bestpath']['dest_part']; 
+				$start = $data['bestpath']['src_part'];
+			}
+			$result[] = RoadSmg::GeoJsonNearestPoint($firstPath,$start,$end)->toArray();
 		}
+		else
+		{
+			// intersection between road from starting point
+			$src_part = $data['bestpath']['src_part'];
+			$result[] = ($data['bestpath']['src_dir'] === 0) ?
+				RoadSmg::GeoJsonNearestPoint($firstPath, 0, $src_part)->toArray() :
+				RoadSmg::GeoJsonNearestPoint($firstPath, $src_part, 1)->toArray();
+		
+			// routing roads
+			foreach ($data['bestpath']['path'] as $value) 
+			{
+				$result[] = RoadSmg::findWithGeoJson($value)->toArray();
+			}
 
-		// intersection between road from end point
-		// $dest_part = 1 - $data['bestpath']['dest_part'];
-		$result[] = ($data['bestpath']['dest_dir'] === 0) ?
-			RoadSmg::GeoJsonNearestPoint($lastPath, 0, $data['bestpath']['dest_part'])->toArray() :
-			RoadSmg::GeoJsonNearestPoint($lastPath, $data['bestpath']['dest_part'], 1)->toArray();
-
+			// intersection between road from end point
+			// $dest_part = 1 - $data['bestpath']['dest_part'];
+			$result[] = ($data['bestpath']['dest_dir'] === 0) ?
+				RoadSmg::GeoJsonNearestPoint($lastPath, 0, $data['bestpath']['dest_part'])->toArray() :
+				RoadSmg::GeoJsonNearestPoint($lastPath, $data['bestpath']['dest_part'], 1)->toArray();
+		}
 		// end point distance to roads
 		$obj = new \StdClass;
 		$obj->gid = '-2';

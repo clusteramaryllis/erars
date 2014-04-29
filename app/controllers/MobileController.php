@@ -9,6 +9,7 @@ class MobileController extends \BaseController {
 	public function getLogin($id, $pass)
 	{
 		$user = User::findByIdPass($id, $pass);
+		$user = $user->first();
 
 		if (!$user)
 		{
@@ -54,7 +55,9 @@ class MobileController extends \BaseController {
 			'</response>';
 
 		return Response::make($data, 200, array(
-			'Content-type' => 'application/xml'
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
 		));
 	}
 
@@ -94,7 +97,9 @@ class MobileController extends \BaseController {
 			'</response>';
 
 		return Response::make($data, 200, array(
-			'Content-type' => 'application/xml'
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
 		));
 	}
 
@@ -133,7 +138,9 @@ class MobileController extends \BaseController {
 			'</response>';
 
 		return Response::make($data, 200, array(
-			'Content-type' => 'application/xml'
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
 		));
 	}
 
@@ -143,27 +150,41 @@ class MobileController extends \BaseController {
 	 */
 	public function postEmergencySend($id, $type, $lng, $lat, $desc)
 	{
-		$em_case = new EmergencyCase;
+		$user = User::find($id);
+		$em_type = EmergencyType::find($type);
 
-		$em_case->type = $type;
-		$em_case->lon = $lng;
-		$em_case->lat = $lat;
-		$em_case->desc = $desc;
-		$em_case->reporter = $id;
-		$em_case->time = DB::raw('NOW()');
-		$em_case->status = 1; // valid
-		$em_case->validator = '0000000000000000'; // admin
-		$em_case->resolver = '0000000000000000'; // admin
+		if ($user && $em_type)
+		{
+			$em_case = new EmergencyCase;
 
-		$em_case->save();
+			$em_case->type = $type;
+			$em_case->lon = $lng;
+			$em_case->lat = $lat;
+			$em_case->desc = $desc;
+			$em_case->reporter = $id;
+			$em_case->time = DB::raw('NOW()');
+			$em_case->status = 1; // valid
+			$em_case->validator = '0000000000000000'; // admin
+			$em_case->resolver = '0000000000000000'; // admin	
+
+			$em_case->save();
+
+			$status = 'Sukses';
+		}
+		else
+		{
+			$status = 'No ID / Jenis tipe tidak ditemukan';
+		}
 
 		$data = '<?xml version="1.0" encoding="UTF-8"?>' .
 			'<response>' .
-				'<status>Sukses</status>'. 
+				'<status>'.$status.'</status>'. 
 			'</response>';
 
 		return Response::make($data, 200, array(
-			'Content-type' => 'application/xml'
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
 		));
 	}
 
@@ -194,7 +215,9 @@ class MobileController extends \BaseController {
 			'</response>';
 
 		return Response::make($data, 200, array(
-			'Content-type' => 'application/xml'
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
 		));
 	}
 
@@ -225,7 +248,9 @@ class MobileController extends \BaseController {
 			'</response>';
 
 		return Response::make($data, 200, array(
-			'Content-type' => 'application/xml'
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
 		));
 	}
 
@@ -276,7 +301,9 @@ class MobileController extends \BaseController {
 			'</response>';		
 
 		return Response::make($data, 200, array(
-			'Content-type' => 'application/xml'
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
 		));
 	}
 
@@ -391,7 +418,9 @@ class MobileController extends \BaseController {
 			'</response>';
 
 		return Response::make($response, 200, array(
-			'Content-type' => 'application/xml'
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
 		));
 	}
 

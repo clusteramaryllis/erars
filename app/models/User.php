@@ -21,7 +21,6 @@ class User extends Eloquent {
 	{
 		return $query
 			->where('no_id', $id)
-			->where('pass', $pass)
-			->first();
+			->where('pass', $pass);
 	}
 }

@@ -200,7 +200,7 @@ class Genetic {
 			)
 		)
 		{
-			$roadsGroup[] = $this->nearestRoad['dest']->gid;
+			$roadsGroup[] = $this->nearestRoad['src']->gid; 
 		}
 		else
 		{
@@ -284,12 +284,16 @@ class Genetic {
 		$endPos = array_pop($roadsGroup);
 		$cost = 0;
 
-		if ($roadsGroup)
+		if ($this->isSameRoad() && count($roadsGroup)<1) // same road
+		{
+			$cost += $this->getDistanceBetweenSameRoad();
+		}
+		else
 		{
 			foreach ($roadsGroup as $road) 
 			{
 				// cache
-				if (!isset($this->roadCache[$road]))
+				if (!isset($this->roadCache[$road]))                       //revision
 				{
 					$street = RoadSmg::find($road);	
 					$this->roadCache[$road] = $street;
@@ -303,46 +307,35 @@ class Genetic {
 				$srcDir = $this->getDirection($firstPos, array_shift($roadsGroup));
 				$destDir = $this->getDirection($endPos, array_pop($roadsGroup));
 			}
-			else // only 1 member array
+			else if (count($roadsGroup) == 1)// only 1 member array
 			{
 				$pos = array_shift($roadsGroup);
 
-				$srcDir = $this->getDirection($firstPos, $pos);
+				$srcDir = $this->getDirection($firstPos, $pos); 
 				$destDir = $this->getDirection($endPos, $pos);
 			}
-
-			// caching to improve performance
-			if (!isset($this->costDirCache[$this->nearestRoad['src']->gid][$srcDir]))
+			else     //revision (only 2 roads)
 			{
-				$this->costDirCache[$this->nearestRoad['src']->gid] = array();
-				$this->costDirCache[$this->nearestRoad['src']->gid][$srcDir] = RoadSmg::findDistanceToNearestDirectedRoad(
-					$this->nearestRoad['src']->gid, 
-					$this->items['src_lat'],
-					$this->items['src_lng'],
-					$srcDir
-				)->to_cost;
+				$srcDir = $this->getDirection($firstPos, $endPos); 
+				$destDir = $this->getDirection($endPos, $firstPos);
 			}
-			$cost += $this->costDirCache[$this->nearestRoad['src']->gid][$srcDir];
 
-			if (!isset($this->costDirCache[$this->nearestRoad['dest']->gid][$destDir]))
-			{
-				$this->costDirCache[$this->nearestRoad['dest']->gid] = array();
-				$this->costDirCache[$this->nearestRoad['dest']->gid][$destDir] = RoadSmg::findDistanceToNearestDirectedRoad(
-					$this->nearestRoad['dest']->gid, 
-					$this->items['dest_lat'],
-					$this->items['dest_lng'],
-					$srcDir
+			$cost += RoadSmg::findDistanceToNearestDirectedRoad(
+				$this->nearestRoad['src']->gid,
+				$this->items['src_lat'],
+				$this->items['src_lng'],
+				$srcDir
 				)->to_cost;
-			}
-			$cost += $this->costDirCache[$this->nearestRoad['dest']->gid][$destDir];
+
+			$cost += RoadSmg::findDistanceToNearestDirectedRoad(
+				$this->nearestRoad['dest']->gid,
+				$this->items['dest_lat'],
+				$this->items['dest_lng'],
+				$destDir
+				)->to_cost;
 
 			$cost += $this->pointDistance['src'];
 			$cost += $this->pointDistance['dest'];
-		}
-
-		if ($this->isSameRoad()) // same road
-		{
-			$cost += $this->getDistanceBetweenSameRoad();
 		}
 
 		return $cost;
@@ -354,7 +347,7 @@ class Genetic {
 	 */
 	protected function getDistanceBetweenSameRoad()
 	{
-		return (abs($this->pointLocation['src'] - $this->pointLocation['dest']) * $this->nearestRoad['src']->gid);
+		return (abs($this->pointLocation['src'] - $this->pointLocation['dest']) * $this->nearestRoad['src']->to_cost); //revision
 	}
 
 	/**
@@ -364,7 +357,7 @@ class Genetic {
 	protected function getDirection($road1, $road2)
 	{
 		// cache
-		if (!isset($this->roadCache[$road1]))
+		if (!isset($this->roadCache[$road1]))   //revision
 		{
 			$street1 = RoadSmg::find($road1);	
 			$this->roadCache[$road1] = $street1;
@@ -550,7 +543,7 @@ class Genetic {
 		$data['bestpath'] = array(
 			'path' => $path,
 			'cost' => $finalRoads[$key]['cost'],
-			'src_part' => $this->pointLocation['src'],
+			'src_part' => $this->pointLocation['src'],    //revision
 			'dest_part' => $this->pointLocation['dest'],
 			'src_point' => RoadSmg::FindNearestPoint(
 				$this->nearestRoad['src']->gid, 
@@ -562,8 +555,14 @@ class Genetic {
 				$this->items['dest_lat'],
 				$this->items['dest_lng']
 			),
-			'src_dir' => $this->getDirection($firstPath, $afterFirstPath),
-			'dest_dir' => $this->getDirection($lastPath, $beforeLastPath)
+			'src_dir' => $this->getDirection(
+				reset($path), 
+				next($path)
+			),
+			'dest_dir' => $this->getDirection(
+				end($path),
+				prev($path)
+			)
 		);
 
 		return $data;

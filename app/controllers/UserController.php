@@ -219,6 +219,8 @@ class UserController extends \BaseController {
 
 		$user->delete();
 
+		$this->deleteAssociateGroup($id);
+
 		Session::flash('delete_message', 'User <b>'. $userNama .'</b> berhasil dihapus');
 		return Redirect::back();
 	}
@@ -419,6 +421,8 @@ class UserController extends \BaseController {
 
 		$user->delete();
 
+		$this->deleteAssociateGroup($id);
+
 		Session::flash('delete_message', 'User <b>'. $userNama .'</b> berhasil dihapus');
 		return Redirect::back();
 	}
@@ -435,6 +439,33 @@ class UserController extends \BaseController {
 		foreach($facilities as $facility)
 		{
 			$this->facilities[$facility->gid] = $facility->nama;
+		}
+	}
+
+	/**
+	 * Reset grup ke admin
+	 * @param  int $id
+	 * @return void
+	 */
+	protected function deleteAssociateGroup($id)
+	{
+		// reset to admin
+		$em_cases_reporter = EmergencyCase::where('reporter', $id);
+		foreach ($em_cases_reporter as $em_case_reporter) 
+		{
+			$em_case_reporter->reporter = '0000000000000000';
+		}
+
+		$em_cases_validator = EmergencyCase::where('validator', $id);
+		foreach ($em_cases_validator as $em_case_validator) 
+		{
+			$em_case_validator->validator = '0000000000000000';
+		}
+
+		$em_cases_resolver = EmergencyCase::where('resolver', $id);
+		foreach ($em_cases_resolver as $em_case_resolver) 
+		{
+			$em_case_resolver->resolver = '0000000000000000';
 		}
 	}
 
