@@ -29,7 +29,7 @@ class UserController extends \BaseController {
 		'pass_confirmation' => 'required',
 		'tmp_lhr' => 'required|alpha|max:15',
 		'tgl_lhr' => 'required|date_format:d-m-Y',
-		'gender' => 'required|max:1|in:L,P',
+		'gender' => 'required|in:L,P',
 		'alamat' => 'required|max:100',
 		'pekerjaan' => 'required|max:50|alpha_space',
 		'no_hp' => 'required|phone',
@@ -348,6 +348,7 @@ class UserController extends \BaseController {
 
 		$user = User::find($id);
 		$facilities = Facility::all();
+		$maxDate = date('m/d/Y', strtotime("-17 years"));
 
 		return View::make('user.edit_ert', array(
 			'gender' => $this->gender,

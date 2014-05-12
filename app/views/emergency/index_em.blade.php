@@ -179,12 +179,20 @@
 								<p>Longitude : {{ $em_case->lon }}</p>
 							</td>
 							<td>{{ date('d-m-Y H:i:s', strtotime($em_case->time)) }}</td>
+							@if ($em_case->user_reporter)
 							<td class="{{ $opt_color[$em_case->user_reporter->grup] }}">
 								{{ $em_case->user_reporter->no_id }} - {{ $em_case->user_reporter->nama }}
 							</td>
+							@else
+							<td><i>Kosong</i></td>
+							@endif
+							@if ($em_case->user_validator)
 							<td class="{{ $opt_color[$em_case->user_validator->grup] }}">
 								{{ $em_case->user_validator->no_id }} - {{ $em_case->user_validator->nama }}
 							</td>
+							@else
+							<td><i>Kosong</i></td>
+							@endif
 							@if ($em_case->user_resolver)
 							<td class="{{ $opt_color[$em_case->user_resolver->grup] }}">
 								{{ $em_case->user_resolver->no_id }} - {{ $em_case->user_resolver->nama }}
@@ -192,9 +200,13 @@
 							@else
 							<td><i>Kosong</i></td>
 							@endif
+							@if ($em_case->status)
 							<td>
 								<span class="{{ $status_color[$em_case->status] }}">{{ $status[$em_case->status] }}</span>
 							</td>
+							@else
+							<td><i>-</i></td>
+							@endif
 							<td width="17%">
 								<a href="{{ action('EmergencyController@getEditEmergency', $em_case->case_id) }}" class="btn btn-info btn-sm">
 									<i class="fa fa-edit"></i> Lihat / Edit

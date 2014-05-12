@@ -102,7 +102,7 @@ class EmergencyController extends \BaseController {
 		// Populate filterBy based on emergency type
 		$this->filterBy = $this->buildEmergencyType();
 
-		// return $em_cases;
+		// return $em_cases->count();
 
 		return View::make('emergency.index_em', array(
 			'em_cases' => $em_cases,

@@ -23,4 +23,10 @@ class User extends Eloquent {
 			->where('no_id', $id)
 			->where('pass', $pass);
 	}
+
+	public function scopeGetName($query, $id)
+	{
+		return $query
+			->where('no_id', $id);
+	}
 }

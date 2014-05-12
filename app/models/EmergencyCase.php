@@ -27,4 +27,27 @@ class EmergencyCase extends Eloquent {
 	{
 		return $this->belongsTo('User', 'resolver');
 	}
+
+	public function scopeGetActivebackup($query)
+	{
+		return $query
+			->select(DB::raw('*'))
+			->where('status',1)
+			->orwhere('status',NULL)
+			->orderBy('time', 'desc')
+			->get();
+	}
+
+	public function scopeGetActive($query)
+	{
+		return $query
+			->select(DB::raw('*'))
+			->whereNull('status')
+			->orWhere('status', 1)
+			->join('em_type', function($join){
+				$join->on('em_case.type', '=', 'em_type.type_id')
+				->where('em_type.alert_p', '=', 1);
+			})
+			->get();
+	}
 }

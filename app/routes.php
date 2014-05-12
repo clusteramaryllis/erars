@@ -88,11 +88,18 @@ Route::group(array( 'before' => 'auth' ), function()
 });
 
 // XML
-Route::get('mobile/login/{id}/{pass}', 'MobileController@getLogin');
-Route::get('mobile/user/register/{id}/{nama}/{tmp_lahir}/{tgl}/{bln}/{thn}/{gender}/{alamat}/{kerja}/{telp}/{email}', 'MobileController@postUserRegister');
+Route::get('mobile/login/{id}/{pass}/{grup}', 'MobileController@getLogin');
+Route::get('mobile/user/register/{id}/{pass}/{nama}/{tmp_lahir}/{tgl}/{bln}/{thn}/{gender}/{alamat}/{kerja}/{telp}/{email}', 'MobileController@postUserRegister');
 Route::get('mobile/user/update/{id}/{nama}/{tmp_lahir}/{tgl}/{bln}/{thn}/{gender}/{alamat}/{kerja}/{telp}/{email}', 'MobileController@putUserUpdate');
-Route::get('mobile/emergency/send/{id}/{type}/{lng}/{lat}/{desc}', 'MobileController@postEmergencySend');
-Route::get('mobile/emergency/validate/{user_id}/{em_id}', 'MobileController@putEmergencyValidate');
-Route::get('mobile/emergency/resolve/{user_id}/{em_id}', 'MobileController@putEmergencyResolve');
+Route::get('mobile/user/chgpwd/{id}/{old_pass}/{new_pass}', 'MobileController@getChangePassword');
+Route::get('mobile/user/verify/{id}', 'MobileController@getVerifyUser');
+Route::get('mobile/emergency/get', 'MobileController@getEM');
+Route::get('mobile/emergency/send/{id}/{type}/{lng}/{lat}/{desc}/{user_type}', 'MobileController@postEmergencySend');
+Route::get('mobile/emergency/validate/{user_id}/{em_id}', 'MobileController@setEmergencyValid');
+Route::get('mobile/emergency/fake/{user_id}/{em_id}', 'MobileController@setEmergencyFake');
+Route::get('mobile/emergency/resolve/{user_id}/{em_id}', 'MobileController@setEmergencyResolved');
 Route::get('mobile/roads', 'MobileController@getRoads');
 Route::get('mobile/routes/{src_lng}/{src_lat}/{dest_lng}/{dest_lat}', 'MobileController@getRoutes');
+Route::get('coba', function(){
+	return EmergencyCase::getActive();
+});

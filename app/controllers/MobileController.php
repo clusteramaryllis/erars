@@ -6,7 +6,7 @@ class MobileController extends \BaseController {
 	 * Mendapatkan login credentials
 	 * @url <domain>/mobile/login/{id}/{pass}
 	 */
-	public function getLogin($id, $pass)
+	public function getLogin($id, $pass, $grup)
 	{
 		$user = User::findByIdPass($id, $pass);
 		$user = $user->first();
@@ -31,11 +31,15 @@ class MobileController extends \BaseController {
 		else
 		{
 			$dates = explode('-', $user->tgl_lhr);
-			$user->login = 'true';
+			
 			$user->type = $user->grup;
 			$user->tgl_lhr = $dates['2'];
 			$user->bln_lhr = $dates['1'];
 			$user->thn_lhr = $dates['0'];
+			if(($grup == 0 && $user->type == 4) || ($grup == 1 && $user->type != 4)) 
+				$user->login = 'true';
+			else
+				$user->login = 'false';
 		}
 
 		$data = '<?xml version="1.0" encoding="UTF-8"?>' .
@@ -44,6 +48,7 @@ class MobileController extends \BaseController {
 				'<no_id>'.$user->no_id.'</no_id>' .
 				'<nama>'.$user->nama.'</nama>' .
 				'<grup>'.$user->grup.'</grup>' .
+				'<tmp_lhr>'.$user->tmp_lhr.'</tmp_lhr>' .
 				'<tgl_lhr>'.$user->tgl_lhr.'</tgl_lhr>' .
 				'<bln_lhr>'.$user->bln_lhr.'</bln_lhr>' .
 				'<thn_lhr>'.$user->thn_lhr.'</thn_lhr>' .
@@ -65,7 +70,7 @@ class MobileController extends \BaseController {
 	 * Register User
 	 * @url <domain>/mobile/user/register/{id}/{nama}/{tmp_lahir}/{tgl}/{bln}/{thn}/{gender}/{alamat}/{kerja}/{telp}/{email}
 	 */
-	public function postUserRegister($id, $nama, $tmp_lhr, $tgl, $bln, $thn, $gender, $alamat, $kerja, $telp, $email)
+	public function postUserRegister($id, $pass, $nama, $tmp_lhr, $tgl, $bln, $thn, $gender, $alamat, $kerja, $telp, $email)
 	{
 		if (User::find($id)) 
 		{
@@ -76,6 +81,7 @@ class MobileController extends \BaseController {
 			$user = new User;
 
 			$user->no_id = $id;
+			$user->pass = $pass;
 			$user->nama = $nama;
 			$user->tmp_lhr = $tmp_lhr;
 			$user->tgl_lhr = $thn . '-' . $bln . '-' . $tgl;
@@ -121,7 +127,6 @@ class MobileController extends \BaseController {
 			$user->pekerjaan = $kerja;
 			$user->no_hp = $telp;
 			$user->email = $email;
-			$user->grup = 4; // sipil	
 
 			$user->save();
 
@@ -145,10 +150,100 @@ class MobileController extends \BaseController {
 	}
 
 	/**
+	* Change User Password
+	* @url <domain>/mobile/{id}/{old_pass}/{new_pass}
+	*/
+	public function getChangePassword($id, $old_pass, $new_pass)
+	{
+		$user = User::where('no_id',$id)->where('pass',$old_pass)->first();
+
+		if($user)
+		{
+			$user->pass = $new_pass;
+			$user->save();
+			$status = "Password berhasil diupdate";
+		}
+		else
+			$status = "Password salah";
+
+		$data = '<?xml version="1.0" encoding="UTF-8"?>' .
+			'<response>' .
+				'<status>'.$status.'</status>'. 
+			'</response>';
+
+		return Response::make($data, 200, array(
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
+		));
+	}
+
+	/**
+	 * Verify User
+	 * @url <domain>/mobile/user/verify/{id}
+	 */
+	public function getVerifyUser($id)
+	{
+		if (User::find($id)) 
+			$status = 'valid';
+		else
+			$status = 'invalid';
+
+		$data = '<?xml version="1.0" encoding="UTF-8"?>' .
+			'<response>' .
+				'<status>'.$status.'</status>'.
+			'</response>';
+
+		return Response::make($data, 200, array(
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
+		));
+	}
+
+	public function getEM()
+	{
+		$emergency = EmergencyCase::GetActive();
+		$items = '<em_case>';
+
+		foreach ($emergency as $key => $em) 
+		{
+			if($em->validator)
+				$validator = User::GetName($em->validator)->first()->nama;
+			else
+				$validator = "";
+			$items .= '<item>' . 
+				'<em_id>'.$em->case_id.'</em_id>'.
+				'<type>'.EmergencyType::find($em->type)->type_name.'</type>' .
+				'<desc>'.$em->desc.'</desc>'.
+				'<lon>'.$em->lon.'</lon>' .
+				'<lat>'.$em->lat.'</lat>' .
+				'<near>'.RoadSmg::FindNearestRoad($em->lat, $em->lon)->street_name.'</near>' .
+				'<time>'.$em->time.'</time>' .
+				'<reporter>'.User::GetName($em->reporter)->first()->nama.'</reporter>' .
+				'<validator>'.$validator.'</validator>'.
+				'<status>'.$em->status.'</status>'.
+				'</item>';
+		}
+		$items .= '</em_case>';
+		
+		$data = '<?xml version="1.0" encoding="UTF-8"?>' .
+			'<response>' .
+				$items.
+			'</response>';
+
+		return Response::make($data, 200, array(
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
+		));
+	}
+
+	/**
 	 * Send Emergency
 	 * @url <domain>/mobile/emergency/send/{id}/{type}/{lng}/{lat}/{desc}
 	 */
-	public function postEmergencySend($id, $type, $lng, $lat, $desc)
+	public function postEmergencySend($id, $type, $lng, $lat, $desc, $user_type)
 	{
 		$user = User::find($id);
 		$em_type = EmergencyType::find($type);
@@ -163,9 +258,12 @@ class MobileController extends \BaseController {
 			$em_case->desc = $desc;
 			$em_case->reporter = $id;
 			$em_case->time = DB::raw('NOW()');
-			$em_case->status = 1; // valid
-			$em_case->validator = '0000000000000000'; // admin
-			$em_case->resolver = '0000000000000000'; // admin	
+			
+			if($user_type == 1)
+			{
+				$em_case->validator = $id; // admin
+				$em_case->status = 1; // valid
+			}
 
 			$em_case->save();
 
@@ -173,7 +271,7 @@ class MobileController extends \BaseController {
 		}
 		else
 		{
-			$status = 'No ID / Jenis tipe tidak ditemukan';
+			$status = 'No ID / Jenis emergency tidak ditemukan';
 		}
 
 		$data = '<?xml version="1.0" encoding="UTF-8"?>' .
@@ -192,18 +290,60 @@ class MobileController extends \BaseController {
 	 * Validate Emergency
 	 * @url <domain>/mobile/emergency/validate/{user_id}/{em_id}
 	 */
-	public function putEmergencyValidate($user_id, $em_id)
+	public function setEmergencyValid($user_id, $em_id)
 	{
 		$user = User::find($user_id);
 		$em_case = EmergencyCase::find($em_id);
 
 		if ($user && $em_case)
 		{
-			$em_case->validator = $user_id;
+			if($em_case->validator)
+			{
+				$status = 'Sudah divalidasi oleh petugas lain';
+			}
+			else
+			{
+				$em_case->validator = $user_id;
+				$em_case->status = 1;
+				$em_case->save();	
+				$status = 'Kasus berhasil dikonfirmasi';
+			}
+		}
+		else
+		{
+			$status = 'ID tidak ditemukan';
+		}
+		
+		$data = '<?xml version="1.0" encoding="UTF-8"?>' .
+			'<response>' .
+				'<status>'.$status.'</status>'. 
+			'</response>';
 
-			$em_case->save();	
+		return Response::make($data, 200, array(
+			'Content-type' => 'text/xml',
+			'Access-Control-Allow-Origin' => '*',
+			'Access-Control-Expose-Headers' => 'Access-Control-Allow-Origin'
+		));
+	}
 
-			$status = 'Sukses';
+	public function setEmergencyFake($user_id, $em_id)
+	{
+		$user = User::find($user_id);
+		$em_case = EmergencyCase::find($em_id);
+
+		if ($user && $em_case)
+		{
+			if($em_case->validator)
+			{
+				$status = 'Sudah divalidasi oleh petugas lain';
+			}
+			else
+			{
+				$em_case->validator = $user_id;
+				$em_case->status = 0;
+				$em_case->save();	
+				$status = 'Kasus berhasil dikonfirmasi';
+			}
 		}
 		else
 		{
@@ -226,18 +366,24 @@ class MobileController extends \BaseController {
 	 * Resolve Emergency
 	 * @url <domain>/mobile/emergency/resolve/{user_id}/{em_id}
 	 */
-	public function putEmergencyResolve($user_id, $em_id)
+	public function setEmergencyResolved($user_id, $em_id)
 	{
 		$user = User::find($user_id);
 		$em_case = EmergencyCase::find($em_id);
 
 		if ($user && $em_case)
 		{
-			$em_case->resolver = $user_id;
-
-			$em_case->save();	
-
-			$status = 'Sukses';
+			if($em_case->resolver)
+			{
+				$status = 'Kasus telah ditutup sebelumnya.';
+			}
+			else
+			{
+				$em_case->resolver = $user_id;
+				$em_case->status = 2;
+				$em_case->save();	
+				$status = 'Kasus berhasil ditutup.';
+			}
 		}
 		else
 		{
@@ -289,10 +435,8 @@ class MobileController extends \BaseController {
 				'<type>'.$marker->type.'</type>' .
 				'<alamat>'.$marker->alamat.'</alamat>' .
 				'<telp>'.$marker->telp.'</telp>' .
-				'<coordinate>'. 
 				'<lng>'.$marker->lng.'</lng>' . 
 				'<lat>'.$marker->lat.'</lat>' . 
-				'</coordinate>' .
 				'</item>';
 		}
 		$items .= '</em_facilities>';
@@ -365,7 +509,7 @@ class MobileController extends \BaseController {
 		$result[] = $obj;
 
 		// intersection between road from starting point
-		$src_part = 1 - $data['bestpath']['src_part'];
+		$src_part = $data['bestpath']['src_part'];
 		$result[] = ($data['bestpath']['src_dir'] === 0) ?
 			RoadSmg::GeoJsonNearestPoint($firstPath, 0, $data['bestpath']['src_part']) :
 			RoadSmg::GeoJsonNearestPoint($firstPath, $src_part, 1);
